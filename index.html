@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plató — Web d'estudi</title>
+<style>
+:root{
+  --ink:#1c2230; --muted:#5b6475; --line:#e6e8ee; --bg:#ffffff; --soft:#f7f8fb;
+  --exp:#2563eb; --exp-bg:#eff5ff; --ex:#ea580c; --ex-bg:#fff6ee; --tst:#7c3aed; --tst-bg:#f6f2ff;
+  --ok:#15803d; --ok-bg:#eafbf0; --ko:#dc2626; --ko-bg:#fdeeee;
+  --b1:#4f46e5; --b2:#0d9488; --b3:#d97706; --b4:#be185d; --b5:#475569; --b6:#0369a1;
+  --side:290px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:16px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;-webkit-text-size-adjust:100%}
+a{color:inherit}
+/* ---------- sidebar ---------- */
+#side{position:fixed;top:0;left:0;bottom:0;width:var(--side);background:var(--soft);border-right:1px solid var(--line);overflow-y:auto;padding:18px 14px 40px;z-index:30}
+#side .brand{font-weight:800;font-size:18px;letter-spacing:-.01em;margin:2px 6px 2px}
+#side .sub{font-size:12.5px;color:var(--muted);margin:0 6px 14px}
+#progress{margin:0 6px 16px;font-size:12.5px;color:var(--muted)}
+#progress .bar{height:7px;background:#e3e6ee;border-radius:9px;overflow:hidden;margin-top:5px}
+#progress .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--tst),var(--exp));transition:width .4s}
+.nav-block{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin:16px 6px 5px;display:flex;align-items:center;gap:7px}
+.nav-block::before{content:"";width:9px;height:9px;border-radius:3px;background:var(--c)}
+.nav-link{display:flex;justify-content:space-between;align-items:center;gap:8px;text-decoration:none;font-size:14px;padding:6px 9px;border-radius:8px;color:#30384a;border-left:3px solid transparent}
+.nav-link:hover{background:#eceef4}
+.nav-link.active{background:#fff;border-left-color:var(--c);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.nav-link .sc{font-size:11.5px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.nav-link .sc.done{color:var(--ok);font-weight:700}
+#menuBtn{display:none}
+#scrim{display:none}
+/* ---------- main ---------- */
+main{margin-left:var(--side);padding:34px 40px 120px}
+.wrap{max-width:860px;margin:0 auto}
+header.hero{border:1px solid var(--line);border-radius:20px;padding:30px 30px 26px;background:linear-gradient(135deg,#f5f3ff 0%,#eef5ff 55%,#fff7ef 100%);margin-bottom:28px}
+.hero .kicker{font-size:12.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tst)}
+.hero h1{font-family:Georgia,"Times New Roman",serif;font-size:40px;line-height:1.1;margin:8px 0 10px;letter-spacing:-.01em}
+.hero p{margin:6px 0;color:#3a4254}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.legend span{font-size:13px;font-weight:600;padding:4px 11px;border-radius:99px;border:1px solid}
+.legend .l1{color:var(--exp);background:var(--exp-bg);border-color:#c7dafe}
+.legend .l2{color:var(--ex);background:var(--ex-bg);border-color:#fed4b0}
+.legend .l3{color:var(--tst);background:var(--tst-bg);border-color:#ddd0fe}
+.block-head{margin:56px 0 18px;padding:18px 22px;border-radius:16px;color:#fff;background:linear-gradient(120deg,var(--c),color-mix(in srgb,var(--c) 70%,#000))}
+.block-head .n{font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.85}
+.block-head h2{margin:2px 0 4px;font-size:27px;letter-spacing:-.01em}
+.block-head p{margin:0;opacity:.92;font-size:15px}
+section.sec{margin:0 0 40px;padding-top:6px}
+section.sec>h3{font-size:22px;margin:0 0 12px;letter-spacing:-.01em;display:flex;align-items:baseline;gap:10px;border-left:5px solid var(--c);padding-left:12px}
+.exp b{color:color-mix(in srgb,var(--c) 85%,#000)}
+.box li::marker{color:var(--c)}
+.test{border-color:var(--c)!important;border-width:1.5px}
+.mn{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:9px 13px;margin:10px 0;font-size:15px}
+.star{background:#fef3c7;color:#92400e;font-size:12px;font-weight:800;padding:2px 8px;border-radius:99px;vertical-align:2px}
+.vf{display:flex;gap:8px}.vf .opt{text-align:center}
+.tbars{margin-top:12px}.tbar{display:grid;grid-template-columns:minmax(120px,210px) 1fr 52px;gap:10px;align-items:center;font-size:13.5px;margin:5px 0}.tbar .tr{height:10px;background:#eef0f5;border-radius:9px;overflow:hidden}.tbar .tr i{display:block;height:100%}
+.gl dt{font-weight:800;color:var(--c);margin-top:8px}.gl dd{margin:0 0 4px 0}
+section.sec>h3 .num{font-size:13px;font-weight:700;color:#fff;background:var(--c);padding:2px 8px;border-radius:7px;flex:none;position:relative;top:-2px}
+.box{border-radius:14px;padding:18px 20px 14px;margin:12px 0;border:1px solid;position:relative}
+.box .tag{display:inline-block;font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.exp{background:var(--exp-bg);border-color:#cfe0ff}.exp .tag{color:var(--exp)}
+.ex{background:var(--ex-bg);border-color:#fbd9bd}.ex .tag{color:var(--ex)}
+.test{background:var(--tst-bg);border-color:#e1d6fd}.test .tag{color:var(--tst)}
+.box p{margin:6px 0 10px}
+.box ul,.box ol{margin:6px 0 10px;padding-left:22px}
+.box li{margin:3px 0}
+.key{background:#fff;border:1px dashed #b9c9f5;border-radius:10px;padding:9px 13px;margin:10px 0;font-size:15px}
+.key b{color:var(--exp)}
+.warn{background:#fffbea;border:1px solid #f6e08a;border-radius:10px;padding:9px 13px;margin:10px 0;font-size:14.5px}
+.gr{font-style:italic;color:#4338ca;font-weight:500}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:99px;background:#eef0f5;color:#475569;vertical-align:1px}
+figure{margin:14px 0 10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px}
+figure svg{width:100%;height:auto;display:block}
+figcaption{font-size:13px;color:var(--muted);margin-top:6px;text-align:center}
+table.t{width:100%;border-collapse:collapse;font-size:14.5px;background:#fff;border-radius:10px;overflow:hidden}
+.tw{overflow-x:auto;margin:10px 0;border:1px solid var(--line);border-radius:12px}
+table.t th,table.t td{padding:9px 11px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+table.t th{background:#f3f4f8;font-size:12.5px;text-transform:uppercase;letter-spacing:.04em;color:#475569}
+table.t tr:last-child td{border-bottom:0}
+/* ---------- quiz ---------- */
+.q{background:#fff;border:1px solid #e6defd;border-radius:12px;padding:14px 15px;margin:10px 0}
+.q .qt{font-weight:600;margin-bottom:9px}
+.q .qtype{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--tst);background:var(--tst-bg);padding:2px 7px;border-radius:6px;margin-right:6px;position:relative;top:-1px}
+.opt{display:block;width:100%;text-align:left;font:inherit;font-size:15px;background:#fbfaff;border:1.5px solid #e4e0f3;border-radius:10px;padding:9px 12px;margin:6px 0;cursor:pointer;color:var(--ink);transition:border-color .15s,background .15s}
+.opt:hover:not([disabled]){border-color:var(--tst);background:#fff}
+.opt[disabled]{cursor:default}
+.opt.right{border-color:var(--ok);background:var(--ok-bg)}
+.opt.wrong{border-color:var(--ko);background:var(--ko-bg)}
+.opt.sel{border-color:var(--tst);background:#f1ebff}
+.fb{font-size:14.5px;margin-top:8px;padding:9px 12px;border-radius:9px;display:none}
+.fb.show{display:block}
+.fb.okk{background:var(--ok-bg);color:#14532d}
+.fb.kok{background:var(--ko-bg);color:#7f1d1d}
+.qbar{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:14px;color:var(--muted)}
+.btn{font:inherit;font-size:14px;font-weight:600;border:0;border-radius:10px;padding:9px 15px;cursor:pointer;background:var(--tst);color:#fff}
+.btn.ghost{background:#fff;color:var(--tst);border:1.5px solid #d9ccfb}
+.btn.big{font-size:16px;padding:12px 20px}
+/* open questions */
+.open textarea{width:100%;min-height:110px;font:inherit;font-size:15px;border:1.5px solid #e1d6fd;border-radius:10px;padding:10px 12px;resize:vertical;background:#fff}
+.model{display:none;margin-top:10px;background:#fff;border-left:4px solid var(--ok);border-radius:8px;padding:10px 14px;font-size:15px}
+.model.show{display:block}
+.check{margin-top:8px;font-size:14.5px}
+.check label{display:flex;gap:8px;align-items:flex-start;margin:4px 0;cursor:pointer}
+.check input{margin-top:5px;accent-color:var(--ok)}
+.selfscore{font-weight:700;color:var(--ok)}
+.text-pau{font-family:Georgia,"Times New Roman",serif;font-size:16.5px;line-height:1.75;background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin:10px 0}
+.text-pau .ref{display:block;font-family:system-ui,sans-serif;font-size:12.5px;color:var(--muted);margin-top:8px}
+/* exam */
+#examBox .q{border-color:#dcd3f7}
+#examResult{display:none;margin-top:18px;border-radius:16px;padding:20px;background:#fff;border:2px solid var(--tst)}
+#examResult .grade{font-size:46px;font-weight:800;line-height:1}
+.weak a{display:inline-block;margin:4px 6px 0 0;font-size:14px;padding:4px 10px;border-radius:99px;background:var(--ko-bg);color:#991b1b;text-decoration:none;font-weight:600}
+.reset{font-size:13px;color:var(--muted);background:none;border:0;cursor:pointer;text-decoration:underline;font:inherit;font-size:13px;padding:0}
+footer{margin-top:60px;font-size:13px;color:var(--muted);text-align:center}
+/* ---------- responsive ---------- */
+@media (min-width:1400px){ :root{--side:310px} main{padding-left:60px;padding-right:60px} .wrap{max-width:900px} }
+@media (max-width:1000px){
+  #side{transform:translateX(-105%);transition:transform .25s;width:min(86vw,330px);box-shadow:0 0 40px rgba(0,0,0,.18)}
+  body.menu #side{transform:none}
+  body.menu #scrim{display:block;position:fixed;inset:0;background:rgba(15,20,35,.35);z-index:25}
+  main{margin-left:0;padding:18px 16px 110px}
+  #menuBtn{display:flex;align-items:center;gap:7px;position:fixed;right:16px;bottom:18px;z-index:40;background:var(--ink);color:#fff;border:0;border-radius:99px;padding:12px 18px;font:inherit;font-weight:700;font-size:15px;box-shadow:0 6px 20px rgba(0,0,0,.25);cursor:pointer}
+  .hero h1{font-size:31px}
+  header.hero{padding:22px 18px}
+  .block-head{margin-top:40px;padding:15px 16px}
+  .block-head h2{font-size:22px}
+  section.sec>h3{font-size:19px}
+  .box{padding:14px 14px 10px}
+  .text-pau{padding:14px 15px;font-size:16px}
+}
+@media (max-width:480px){ body{font-size:15.5px} .opt{font-size:14.5px} }
+</style>
+</head>
+<body>
+<nav id="side" aria-label="Índex">
+  <div class="brand">Plató · Estudi</div>
+  <div class="sub">Filosofia · 2n Batxillerat</div>
+  <div id="progress">Encerts: <b id="pTxt">0 / 0</b><div class="bar"><i id="pBar"></i></div>
+    <button class="reset" id="resetAll" type="button">Reiniciar tots els tests</button></div>
+  <div id="navList"></div>
+</nav>
+<div id="scrim"></div>
+<button id="menuBtn" type="button">☰ Índex</button>
+
+<main><div class="wrap">
+
+<header class="hero">
+  <div class="kicker">Filosofia · Plató</div>
+  <h1>Les idees, l'ànima, el coneixement i la ciutat</h1>
+  <p>Tot el que has de saber de Plató a partir dels teus apunts, explicat com una història amb causes i conseqüències. Cada apartat té el mateix ordre:</p>
+  <div class="legend"><span class="l1">Explicació</span><span class="l2">Exemple</span><span class="l3">Test</span></div>
+  <p style="margin-top:14px;font-size:14.5px">Al final hi ha un <b>model de comentari de text tipus PAU</b> (amb les 5 preguntes de l'examen) i un <b>simulacre</b> amb preguntes a l'atzar i nota sobre 10.</p>
+</header>
+
+<!-- ============ INTRO ============ -->
+<div class="block-head" style="--c:var(--b5)" data-block="Punt de partida" data-c="var(--b5)">
+  <div class="n">Punt de partida</div><h2>Per què Plató pensa el que pensa</h2>
+  <p>Una sola idea ho connecta tot: la teoria de les idees.</p>
+</div>
+
+<section class="sec" id="s-intro" style="--c:var(--b5)" data-title="El mapa de Plató">
+<h3><span class="num">0</span>El mapa de Plató</h3>
+<div class="box exp"><div class="tag">Explicació</div>
+<p>Plató veu que tot el que ens envolta canvia: les coses neixen, s'espatllen i moren, i les opinions de la gent també canvien. Si només existís això, no hi hauria <b>veritats fixes</b>: tampoc sobre què és just. La seva resposta és la <b>teoria de les idees</b>, també anomenada <b>teoria dels dos móns</b>.</p>
+<p>Als teus apunts ho diu clar: <b>tot està connectat amb la teoria de les idees</b>. Si existeix un món d'idees perfectes i immutables, aleshores hi ha una veritat objectiva, i tota la resta de la seva filosofia en surt:</p>
+<ul>
+<li><b>Metafísica:</b> hi ha dos móns, el sensible i l'intel·ligible.</li>
+<li><b>Antropologia:</b> l'ésser humà també és doble, cos (sensible) i ànima (intel·ligible).</li>
+<li><b>Epistemologia:</b> hi ha dos tipus de coneixement, l'opinió (sobre el sensible) i la ciència (sobre les idees).</li>
+<li><b>Política:</b> ha de governar qui coneix les idees, és a dir, el filòsof.</li>
+</ul>
+<figure><svg viewBox="0 0 640 260" role="img" aria-label="Esquema: la teoria de les idees al centre connecta metafísica, antropologia, epistemologia i política">
+<defs><marker id="ar0" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#94a3b8"/></marker></defs>
+<rect x="215" y="100" width="210" height="60" rx="14" fill="#1c2230"/>
+<text x="320" y="126" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">TEORIA DE LES IDEES</text>
+<text x="320" y="146" text-anchor="middle" fill="#cbd5e1" font-size="12.5">(dos móns · dualisme)</text>
+<g font-size="13.5" font-weight="700" text-anchor="middle">
+<rect x="20" y="18" width="200" height="54" rx="12" fill="#eef0ff" stroke="#4f46e5"/><text x="120" y="41" fill="#4f46e5">METAFÍSICA</text><text x="120" y="60" fill="#475569" font-weight="400" font-size="12">sensible / intel·ligible</text>
+<rect x="420" y="18" width="200" height="54" rx="12" fill="#e7f8f6" stroke="#0d9488"/><text x="520" y="41" fill="#0d9488">ANTROPOLOGIA</text><text x="520" y="60" fill="#475569" font-weight="400" font-size="12">cos / ànima</text>
+<rect x="20" y="188" width="200" height="54" rx="12" fill="#fff6e6" stroke="#d97706"/><text x="120" y="211" fill="#b45309">EPISTEMOLOGIA</text><text x="120" y="230" fill="#475569" font-weight="400" font-size="12">opinió / ciència</text>
+<rect x="420" y="188" width="200" height="54" rx="12" fill="#fdeef5" stroke="#be185d"/><text x="520" y="211" fill="#be185d">POLÍTICA</text><text x="520" y="230" fill="#475569" font-weight="400" font-size="12">governa el filòsof</text>
+</g>
+<g stroke="#94a3b8" stroke-width="2" fill="none" marker-end="url(#ar0)">
+<path d="M250 100 L170 74"/><path d="M390 100 L470 74"/><path d="M250 160 L170 186"/><path d="M390 160 L470 186"/>
+</g></svg><figcaption>Tot surt d'una sola idea: hi ha dos nivells de realitat.</figcaption></figure>
+</div>
+<div class="box ex"><div class="tag">💡 Exemple</div>
+<p>Si et pregunten a l'examen «per què Plató creu que han de governar els filòsofs?», no n'hi ha prou de dir «perquè són savis». La cadena completa és: <b>hi ha idees perfectes</b> (metafísica) → <b>només la raó les coneix</b> (epistemologia) → <b>en els filòsofs mana la part racional de l'ànima</b> (antropologia) → <b>són els únics que saben què és la justícia</b> (política).</p>
+</div>
+<div class="box test"><div class="tag">Test</div><div class="quiz" data-q="intro"></div></div>
+</section>
+
+<!-- ============ BLOC 1 METAFÍSICA ============ -->
+<div class="block-head" style="--c:var(--b1)" data-block="1 · Metafísica" data-c="var(--b1)">
+  <div class="n">Bloc 1</div><h2>Metafísica: la teoria dels dos móns</h2>
+  <p>Què hi ha realment? Per a Plató, la realitat no és una sinó dues.</p>
+</div>
+
+<section class="sec" id="m1" style="--c:var(--b1)" data-title="Dos móns: el dualisme">
+<h3><span class="num">1.1</span>Dos móns: el dualisme</h3>
+<div class="box exp"><div class="tag">Explicació</div>
+<p>Plató afirma que <b>la realitat no és una, sinó que són dues</b>: existeixen dos móns. Aquesta postura s'anomena <b>dualisme</b> (ontològic).</p>
+<p>Per què necessita dos móns? Perquè el que veiem canvia contínuament (les coses neixen, envelleixen, es trenquen) i, en canvi, quan pensem coses com «la justícia», «el cercle» o «el cavall», pensem alguna cosa que <b>no canvia</b>. Si tot fos canvi, no podríem conèixer res de manera segura. Plató ho resol separant:</p>
+<ul>
+<li>el <b>món sensible</b> (el que captem amb els sentits), i</li>
+<li>el <b>món de les idees o món intel·ligible</b> (el que només podem pensar).</li>
+</ul>
+<figure><svg viewBox="0 0 640 250" role="img" aria-label="Dos móns: a dalt el món intel·ligible, a baix el món sensible, units per les relacions imitar i participar">
+<defs><marker id="ar1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#4f46e5"/></marker></defs>
+<rect x="30" y="12" width="580" height="88" rx="14" fill="#eef0ff" stroke="#4f46e5" stroke-width="1.5"/>
+<text x="50" y="40" font-size="16" font-weight="800" fill="#3730a3">MÓN INTEL·LIGIBLE · <tspan font-style="italic" font-weight="600">kósmos noetós</tspan></text>
+<text x="50" y="64" font-size="13.5" fill="#334155">Idees · immaterial · etern · immòbil · perfecte</text>
+<text x="50" y="86" font-size="13.5" fill="#334155">Es coneix amb la <tspan font-weight="700">raó</tspan> → ciència (epistéme)</text>
+<rect x="30" y="150" width="580" height="88" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+<text x="50" y="178" font-size="16" font-weight="800" fill="#334155">MÓN SENSIBLE · <tspan font-style="italic" font-weight="600">tópos horatós</tspan></text>
+<text x="50" y="202" font-size="13.5" fill="#334155">Coses · material · temporal · en canvi · imperfecte</text>
+<text x="50" y="224" font-size="13.5" fill="#334155">Es coneix amb els <tspan font-weight="700">sentits</tspan> → opinió (dóxa)</text>
+<path d="M470 150 L470 104" stroke="#4f46e5" stroke-width="2.5" marker-end="url(#ar1)"/>
+<text x="480" y="132" font-size="13" font-weight="700" fill="#4f46e5">imita i participa</text>
+<text x="590" y="132" font-size="22" fill="#4f46e5" text-anchor="end"></text>
+</svg><figcaption>El món de dalt és el model; el de baix n'és la còpia.</figcaption></figure>
+</div>
+<div class="box ex"><div class="tag">💡 Exemple</div>
+<p>Dibuixa un cercle a la pissarra. Mai serà perfectament rodó: el guix tremola, la línia té gruix. Però tu saps <b>què és un cercle perfecte</b> (tots els punts a la mateixa distància del centre) encara que no n'hagis vist mai cap. El cercle de la pissarra és al món sensible; el cercle perfecte que penses és al món intel·ligible.</p>
+</div>
+<div class="box test"><div class="tag">Test</div><div class="quiz" data-q="m1"></div></div>
+</section>
+
+<section class="sec" id="m2" style="--c:var(--b1)" data-title="El món sensible">
+<h3><span class="num">1.2</span>El món sensible <span class="gr">(tópos horatós)</span></h3>
+<div class="box exp"><div class="tag">Explicació</div>
+<p>El món sensible està fet de <b>matèria</b>, i la matèria es <b>capta pels sentits</b>. D'aquí en surten les seves característiques:</p>
+<ul>
+<li><b>Temporal:</b> tot el que hi ha està sotmès al temps.</li>
+<li><b>En naixement i canvi:</b> les coses neixen, canvien i moren.</li>
+<li><b>Imperfecte:</b> totes les coses podrien augmentar la seva qualitat; sempre n'hi pot haver una de millor.</li>
+</ul>
+<p>Com que canvia contínuament, d'aquest món només en podem tenir <b>opinió</b> (<span class="gr">dóxa</span>), no coneixement segur.</p>
+<div class="warn">💡 A l'examen, fer servir el terme grec <b>tópos horatós</b> («lloc visible») dona més nivell.</div>
+<div class="mn">🧠 <b>Sensible = Sentits</b>. Les tres T: <b>T</b>emporal, <b>T</b>ransforma (canvi), <b>T</b>ara (imperfecte).</div>
+</div>
+<div class="box ex" ><div class="tag">💡 Exemple</div>
+<p>El teu mòbil: el vas estrenar nou, ara té ratllades i d'aquí a uns anys anirà lent i el llançaràs (temporal i en canvi). I per bo que sigui, sempre en sortirà un de millor (imperfecte). És un objecte típic del món sensible.</p>
+</div>
+<div class="box test"><div class="tag">Test</div><div class="quiz" data-q="m2"></div></div>
+</section>
+
+<section class="sec" id="m3" style="--c:var(--b1)" data-title="El món de les idees">
+<h3><span class="num">1.3</span>El món de les idees <span class="gr">(kósmos noetós)</span></h3>
+<div class="box exp"><div class="tag">Explicació</div>
+<p>El món intel·ligible és el contrari exacte del sensible, i per això és el món veritablement real:</p>
+<ul>
+<li><b>Immaterial:</b> no està en cap lloc ni espai; és l'«univers del pensament».</li>
+<li><b>Atemporal o etern:</b> no canvia, és sempre igual.</li>
+<li><b>Immòbil.</b></li>
+<li><b>Perfecte.</b></li>
+</ul>
+<p>Les idees no es veuen: <b>només les podem pensar</b>. I com que no canvien, sí que en podem tenir un coneixement segur: la ciència (<span class="gr">epistéme</span>).</p>
+<div class="key">🔑 La idea és l'<b>essència</b> d'una cosa: allò que fa que un cavall sigui cavall. L'essència és al món intel·ligible i <b>no la veiem</b>.</div>
+</div>
+<div class="box ex"><div class="tag">💡 Exemple</div>
+<p>L'exemple dels teus apunts: uns pares decideixen comprar un cavall. Abans de tenir-lo ja <b>pensen</b> el nom, el menjar, el veterinari... pensen en les característiques del cavall sense haver-lo vist; potser encara ni ha nascut. El que tenen al cap és la <b>idea de cavall</b>: no té color ni matèria, però és el model que farà que reconeguin qualsevol cavall concret.</p>
+</div>
+<div class="box test"><div class="tag">Test</div><div class="quiz" data-q="m3"></div></div>
+</section>
+
+<section class="sec" id="m4" style="--c:var(--b1)" data-title="Imitació i participació">
+<h3><span class="num">1.4</span>La relació entre els dos móns: imitar i participar</h3>
+<div class="box exp"><div class="tag">Explicació</div>
+<p>Els dos móns són diferents, però <b>tenen una relació</b>, i no és una relació d'iguals: <b>un món és superior a l'altre</b>, perquè el perfecte és superior a l'imperfecte.</p>
+<p>Plató la descriu amb dos verbs:</p>
+<ul>
+<li><b>Imitar</b> (<span class="gr">mímesi</span>): el món sensible <b>imita</b> el món intel·ligible, com una còpia imita el model. Implica dos elements: l'imitador i l'imitat. I <b>qui imita depèn de la cosa imitada</b>, mai al revés.</li>
+<li><b>Participar</b> (<span class="gr">mètexi</span>): les coses sensibles <b>participen</b> de les idees, en tenen «una part», però modificada i imperfecta.</li>
+</ul>
+<div class="key">🔑 Allò que l'objecte sensible <b>adquireix</b> de l'objecte intel·ligible és el que <b>fa que sigui el que és</b>. Un cavall és cavall perquè participa de la idea de Cavall.</div>
+</div>
+<div class="box ex"><div class="tag">💡 Exemple</div>
+<p>El símbol ♥ dels teus apunts: el dibuix d'un cor pertany al món sensible, però és un símbol que <b>representa</b> la idea de cor (l'amor). El dibuix depèn de la idea, no al revés.</p>
+<p>Un altre: una foto teva t'<b>imita</b>. Si tu canvies de pentinat, la foto queda antiga; però si la foto es crema, tu segueixes existint. La còpia depèn del model.</p>
+</div>
+<div class="box test"><div class="tag">Test</div><div class="quiz" data-q="m4"></div></div>
+</section>
+
+<section class="sec" id="m5" style="--c:var(--b1)" data-title="Jerarquia i Idea del Bé">
+<h3><span class="num">1.5</span>La jerarquització de les idees i la Idea del Bé</h3>
+<div class="box exp"><div class="tag">Explicació</div>
+<p>Les idees <b>no estan totes al mateix nivell</b>: estan classificades de més a menys importants. Hi ha una relació de <b>dependència</b>: les idees de nivell inferior depenen de les superiors (tot i que totes són perfectes).</p>
+<p>Al cim de la piràmide hi ha <b>una sola idea</b>. Quina? Plató no ho deixa del tot clar, i per això hi ha diverses propostes sobre què culmina el <span class="gr">kósmos noetós</span>: l'<b>U</b>, la <b>Bellesa</b> i, sobretot, la <b>Idea del Bé</b>: si tot és bo en algun grau, no hi ha res que sigui només dolent. És la <b>idea suprema</b>, de la qual depenen totes les altres. Per entendre-la, però, cal assolir-la (ho veurem a la dialèctica).</p>
+<figure><svg viewBox="0 0 640 230" role="img" aria-label="Piràmide de les idees amb la Idea del Bé al cim">
+<polygon points="320,14 560,214 80,214" fill="#eef0ff" stroke="#4f46e5" stroke-width="2"/>
+<line x1="272" y1="54" x2="368" y2="54" stroke="#4f46e5"/><line x1="224" y1="94" x2="416" y2="94" stroke="#4f46e5"/><line x1="176" y1="134" x2="464" y2="134" stroke="#4f46e5"/><line x1="128" y1="174" x2="512" y2="174" stroke="#4f46e5"/>
+<text x="320" y="46" text-anchor="middle" font-size="12.5" font-weight="800" fill="#3730a3">BÉ</text>
+<text x="320" y="80" text-anchor="middle" font-size="12" fill="#334155">Bellesa · Justícia · U</text>
+<text x="320" y="120" text-anchor="middle" font-size="12" fill="#334155">Idees morals i matemàtiques</text>
+<text x="320" y="160" text-anchor="middle" font-size="12" fill="#334155">Idees de coses (Cavall, Home...)</text>
+<text x="320" y="200" text-anchor="middle" font-size="12" fill="#64748b">les inferiors depenen de les superiors</text>
+<text x="575" y="36" font-size="12.5" fill="#4f46e5" font-weight="700">+ important</text>
+<text x="575" y="214" font-size="12.5" fill="#64748b">− important</text>
+</svg><figcaption>La jerarquia de les idees. Al cim, la Idea del Bé.</figcaption></figure>
+<p><b>Conseqüència:</b> és una <b>jerarquia metafísica que afecta tots els éssers</b>. Si la realitat mateixa està ordenada de més a menys valuós, la societat també ho estarà. Per això es diu que és una <b>teoria antidemocràtica</b>: no tothom val igual per governar.</p>
+</div>
+<div class="box ex"><div class="tag">💡 Exemple</div>
+<p>Pensa en una empresa: el director general marca l'objectiu i tots els departaments en depenen. Si el director desaparegués, els departaments perdrien el sentit. La Idea del Bé és el «director» de totes les idees: dona sentit i existència a la resta.</p>
+</div>
+<div class="box test"><div class="tag">Test</div><div class="quiz" data-q="m5"></div></div>
+<div class="box test open"><div class="tag">Pregunta oberta · Bloc 1</div>
+<p><b>Explica la relació entre el món sensible i el món intel·ligible segons Plató.</b></p>
+<textarea placeholder="Escriu la teva resposta..."></textarea>
+<div style="margin-top:8px"><button class="btn ghost showModel" type="button">Veure resposta model</button></div>
+<div class="model"><p>Per a Plató la realitat és doble (dualisme). El <b>món sensible</b> (<i>tópos horatós</i>) és material, temporal, canviant i imperfecte, i es coneix amb els sentits. El <b>món intel·ligible</b> (<i>kósmos noetós</i>) és immaterial, etern, immòbil i perfecte, i només es coneix amb la raó. Els dos móns es relacionen de manera jeràrquica: el perfecte és superior a l'imperfecte. El món sensible <b>imita</b> el món de les idees (com una còpia imita el model) i les coses sensibles <b>participen</b> de les idees: allò que reben de la idea és el que fa que siguin el que són (la seva essència). Per això qui imita depèn de la cosa imitada, i no al revés.</p>
+<div class="check"><b>Autocorrecció:</b>
+<label><input type="checkbox"> Dic que és un dualisme (dos móns)</label>
+<label><input type="checkbox"> Dono 3 característiques de cada món</label>
+<label><input type="checkbox"> Faig servir els termes grecs</label>
+<label><input type="checkbox"> Explico imitar i participar</label>
+<label><input type="checkbox"> Dic que un és superior i que la còpia depèn del model</label>
+<div>Puntuació orientativa: <span class="selfscore">0</span> / 10</div></div></div>
+</div>
+</section>
+
+<!-- ============ BLOC 2 ANTROPOLOGIA ============ -->
+<div class="block-head" style="--c:var(--b2)" data-block="2 · Antropologia" data-c="var(--b2)">
+  <div class="n">Bloc 2</div><h2>Antropologia: la teoria de l'ànima</h2>
+  <p>Si la realitat és doble, l'ésser humà també ho és.</p>
+</div>
+
+<section class="sec" id="a1" style="--c:var(--b2)" data-title="L'ésser humà: cos + ànima">
+<h3><span class="num">2.1</span>L'ésser humà: cos + ànima</h3>
+<div class="box exp"><div class="tag">Explicació</div>
+<p>Plató defineix l'ésser humà com la <b>unió de cos i ànima</b>: un altre <b>dualisme</b>, ara antropològic. Cada part pertany a un dels dos móns:</p>
+<ul>
+<li>El <b>cos</b> → món sensible (material, mortal).</li>
+<li>L'<b>ànima</b> → la seva naturalesa és intel·ligible (immaterial, immortal).</li>
+</ul>
+<p>D'aquí ve el <b>problema</b>: si l'ànima és d'un altre món, què hi fa dins d'un cos? La resposta de Plató és que l'ànima <b>no hi està en el seu lloc</b>: el seu propòsit és el món de les idees. Per això la vida humana ha de <b>progressar</b>: l'ésser humà ha de «deixar de ser» només un ésser humà perquè l'ànima torni a la seva naturalesa, a la seva existència pròpia en el món de les idees.</p>
+<p>Ara bé, mentre vivim cos i ànima han d'estar junts: <b>si se separessin, l'ésser humà deixaria d'existir</b>, és a dir, moriria.</p>
+<div class="key">🔑 La paraula <b>psicologia</b> ve del grec <span class="gr">psyché</span> = ànima. Molts filòsofs han rebutjat la idea d'ànima i d'altres l'han defensada, però <b>el cos mai s'ha qüestionat</b>.</div>
+</div>
+<div class="box ex"><div class="tag">💡 Exemple</div>
+<p>Pensa en un astronauta dins d'un vestit espacial. El vestit (cos) li permet sobreviure a l'espai, però ell no «és» el vestit, i el vestit li limita els moviments. El que vol l'astronauta és tornar a casa (el món de les idees).</p>
+</div>
+<div class="box test"><div class="tag">Test</div><div class="quiz" data-q="a1"></div></div>
+</section>
+
+<section class="sec" id="a2" style="--c:var(--b2)" data-title="El mite del carro alat">
+<h3><span class="num">2.2</span>El mite del carro alat <span class="pill">Fedre</span></h3>
+<div class="box exp"><div class="tag">Explicació</div>
+<p>Al diàleg <b>Fedre</b>, Plató explica com és l'ànima amb un mite. Imagina un <b>carro que vola</b>, amb <b>ales</b>, tirat per <b>dos cavalls</b> i conduït per un <b>auriga</b> (el conductor, «genet» als apunts). El carro representa l'ànima de l'ésser humà, que té <b>3 parts</b> (és <b>tripartida</b>). Els cavalls no saben on van: els ha de dirigir l'auriga.</p>
+<figure><svg viewBox="0 0 640 250" role="img" aria-label="Carro alat: auriga racional, cavall blanc irascible, cavall negre concupiscible">
+<g font-size="13">
+<path d="M70 120 C40 80 40 60 30 40 C70 55 95 80 110 110 Z" fill="#ccfbf1" stroke="#0d9488"/>
+<path d="M70 150 C40 190 40 210 30 230 C70 215 95 190 110 160 Z" fill="#ccfbf1" stroke="#0d9488"/>
+<rect x="80" y="95" width="120" height="80" rx="14" fill="#e7f8f6" stroke="#0d9488" stroke-width="2"/>
+<circle cx="140" cy="135" r="20" fill="#0d9488"/><text x="140" y="140" text-anchor="middle" fill="#fff" font-weight="800" font-size="12">R</text>
+<line x1="200" y1="120" x2="330" y2="70" stroke="#64748b" stroke-width="2"/><line x1="200" y1="150" x2="330" y2="185" stroke="#64748b" stroke-width="2"/>
+<rect x="330" y="40" width="130" height="58" rx="22" fill="#fff" stroke="#0f172a" stroke-width="2"/>
+<text x="395" y="66" text-anchor="middle" font-weight="800" fill="#0f172a">cavall BLANC</text><text x="395" y="84" text-anchor="middle" fill="#475569" font-size="12">noble, dòcil</text>
+<rect x="330" y="156" width="130" height="58" rx="22" fill="#1f2937"/>
+<text x="395" y="182" text-anchor="middle" font-weight="800" fill="#fff">cavall NEGRE</text><text x="395" y="200" text-anchor="middle" fill="#cbd5e1" font-size="12">rebel, enèrgic</text>
+<text x="140" y="200" text-anchor="middle" font-weight="700" fill="#0d9488">AURIGA</text>
+<text x="140" y="80" text-anchor="middle" font-weight="700" fill="#0d9488">ales</text>
+<text x="480" y="66" fill="#0f172a" font-weight="700">→ IRASCIBLE</text><text x="480" y="84" fill="#475569" font-size="12">valentia, coratge</text>
+<text x="480" y="182" fill="#0f172a" font-weight="700">→ CONCUPISCIBLE</text><text x="480" y="200" fill="#475569" font-size="12">desitjos (desiderativa)</text>
+<text x="140" y="232" text-anchor="middle" fill="#0f172a" font-weight="700">→ RACIONAL</text>
+</g></svg><figcaption>Cada element del mite és una part de l'ànima.</figcaption></figure>
+<ul>
+<li><b>Cavall negre → part concupiscible (desiderativa).</b> Rebel, no és obedient, enèrgic. Sempre vol aconseguir allò que es proposa: es mou segons els seus desitjos i busca satisfer-los. Si et deixes guiar pels teus desitjos, mana el cavall negre.</li>
+<li><b>Cavall blanc → part irascible.</b> Noble, dòcil, obeeix el conductor. És disciplinat, escolta la guia i s'allunya de les coses que el perjudiquen (les rebutja). <b>Defensa i protegeix</b> l'ànima: s'activa quan troba alguna cosa negativa per a l'ànima, i fins i tot se sacrifica.</li>
+<li><b>Auriga → part racional (intel·lectual).</b> La <b>més important</b>, perquè els cavalls no pensen. Ell els diu què han de fer: la seva funció és <b>pensar i guiar</b> amb el pensament. Si no guia bé, l'ànima es perd. Obliga els cavalls a obeir, i això és un esforç.</li>
+<li><b>Ales →</b> allò que ens fa pensar en el món intel·ligible; són perfectes i pures.</li>
+</ul>
+<p><b>I què passa si el carro cau?</b> Quan els cavalls o l'auriga no fan el que han de fer, hi ha un problema: el carro <b>perd les ales, deixa de volar i cau</b>. Aleshores és expulsat del món de les idees (que és perfecte) i hi ha un <b>naixement</b>: l'ànima <b>s'ajunta amb el cos accidentalment</b> (per un «accident», per immaduresa). Per això l'ànima humana és imperfecta.</p>
+<div class="mn">🧠 <b>NEGRE = NEcessitats</b> (desitjos) · <b>BLANC = Brau</b> (valentia, defensa) · <b>AURIGA = rAó</b>. I a la ciutat, de baix a dalt: <b>A-G-G</b> = Artesans, Guardians, Governants.</div>
+</div>
+<div class="box ex" ><div class="tag">💡 Exemple</div>
+<p>Són les 22:00 i demà tens examen. El <b>cavall negre</b> vol obrir TikTok «només 5 minuts». El <b>cavall blanc</b> s'indigna: «no penso suspendre, no deixaré que em passi una altra vegada». L'<b>auriga</b> pensa: «si estudio una hora més i després descanso, rendiré millor». Quan la raó aconsegueix que els dos cavalls estirin cap al mateix lloc, el carro vola. Quan guanya el cavall negre... el carro cau.</p>
+</div>
+<div class="box test"><div class="tag">Test</div><div class="quiz" data-q="a2"></div></div>
+</section>
+
+<section class="sec" id="a3" style="--c:var(--b2)" data-title="Unió accidental i purificació">
+<h3><span class="num">2.3</span>La unió ànima–cos: accidental, presó i purificació</h3>
+<div class="box exp"><div class="tag">Explicació</div>
+<p>La unió de l'ànima i el cos és <b>accidental</b>. En filosofia, «accidental» vol dir <b>no necessari, només possible</b>: podria passar o no passar (com un accident de cotxe). L'ànima no necessita el cos per existir. D'aquí en surten diverses conseqüències encadenades:</p>
+<ol>
+<li>Quan l'ànima i el cos se separen, es produeix la <b>mort de l'individu</b>: el cos es destrueix, però <b>l'ànima subsisteix</b> (és immortal).</li>
+<li>Plató diu que el <b>cos és la presó de l'ànima</b>. L'ànima ha d'intentar sortir de la presó.</li>
+<li>Per això la vida és un <b>procés de purificació</b>: netejar l'ànima i eliminar el que la perjudica (el cos, si treus el cos, mors). La vida s'ha d'aprofitar al màxim perquè l'ànima estigui preparada per tornar al món de les idees, que és el que mereix.</li>
+<li>És una concepció de l'humà en dues parts on <b>una és millor que l'altra</b>: el cos ens perjudica. (Comparació moderna: ment i cervell; la ment no es pot veure.)</li>
+</ol>
+<p>A més, l'ànima té la capacitat de <b>canviar de cos</b>: és la <b>transmigració</b> (o metempsicosi). L'ànima transmigra a un cos diferent <b>segons el que mereix</b> per com ha viscut.</p>
+<div class="warn">⚠️ Als apunts surten dos termes: <b>reencarnació</b> = tornar a la carn, a un cos (paraula associada al cristianisme) i <b>transmigració</b> = l'ànima passa a un cos <b>diferent</b> segons el que mereix. A l'examen, per a Plató, fes servir <b>transmigració</b>.</div>
+</div>
+<div class="box ex"><div class="tag">💡 Exemple</div>
+<p>És com un videojoc en què el teu personatge (cos) pot morir, però el teu compte (ànima) es conserva. Segons com hagis jugat, el següent personatge que et toca és millor o pitjor. L'objectiu final, però, no és seguir canviant de personatge, sinó «sortir del joc» i tornar al món de les idees.</p>
+</div>
+<div class="box test"><div class="tag">Test</div><div class="quiz" data-q="a3"></div></div>
+<div class="box test open"><div class="tag">Pregunta oberta · Bloc 2</div>
+<p><b>Explica el mite del carro alat i què representa cada element.</b></p>
+<textarea placeholder="Escriu la teva resposta..."></textarea>
+<div style="margin-top:8px"><button class="btn ghost showModel" type="button">Veure resposta model</button></div>
+<div class="model"><p>Al <b>Fedre</b>, Plató compara l'ànima amb un carro alat tirat per dos cavalls i guiat per un auriga. L'ànima és <b>tripartida</b>. El <b>cavall negre</b>, rebel i enèrgic, és la part <b>concupiscible</b> o desiderativa, que busca satisfer els desitjos. El <b>cavall blanc</b>, noble i dòcil, és la part <b>irascible</b>, que defensa l'ànima del que és negatiu i actua amb coratge. L'<b>auriga</b> és la part <b>racional</b>, la més important, perquè ha de pensar i guiar els cavalls, que no pensen. Les <b>ales</b> permeten que el carro voli pel món intel·ligible. Si l'auriga no domina els cavalls, el carro perd les ales i cau: l'ànima s'uneix accidentalment a un cos i neix un ésser humà. Per això l'objectiu de la vida és que la raó domini i l'ànima es purifiqui per tornar al món de les idees.</p>
+<div class="check"><b>Autocorrecció:</b>
+<label><input type="checkbox"> Cito el Fedre i dic que l'ànima és tripartida</label>
+<label><input type="checkbox"> Cavall negre = concupiscible (amb descripció)</label>
+<label><input type="checkbox"> Cavall blanc = irascible (amb descripció)</label>
+<label><input type="checkbox"> Auriga = racional, la més important i per què</label>
+<label><input type="checkbox"> Explico la caiguda (ales, naixement, unió accidental)</label>
+<div>Puntuació orientativa: <span class="selfscore">0</span> / 10</div></div></div>
+</div>
+</section>
+
+<!-- ============ BLOC 3 EPISTEMOLOGIA ============ -->
+<div class="block-head" style="--c:var(--b3)" data-block="3 · Epistemologia" data-c="var(--b3)">
+  <div class="n">Bloc 3</div><h2>Epistemologia: la teoria del coneixement</h2>
+  <p>Com podem conèixer les idees si no les veiem? Tres respostes: reminiscència, dialèctica i el símil de la línia.</p>
+</div>
+
+<section class="sec" id="e1" style="--c:var(--b3)" data-title="Reminiscència i el Menó">
+<h3><span class="num">3.1</span>La reminiscència <span class="gr">(anàmnesi)</span></h3>
+<div class="box exp"><div class="tag">Explicació</div>
+<p>Si l'ànima venia del món de les idees (recorda el carro alat), aleshores ja les va <b>contemplar</b> abans de néixer. En caure i unir-se al cos, les va <b>oblidar</b>. Per tant, <b>conèixer és recordar</b>: és un procés de <b>recuperació</b>, tornar on havies estat. Se'n conserva un record mínim, i les coses sensibles el desperten.</p>
+<div class="key">🔑 <b>Anàmnesi</b> = <i>ana-</i> («de nou») + <i>mnesis</i> («memòria»): <b>tornar a recordar</b>. És el contrari de l'<b>amnèsia</b> (<i>a-</i>, prefix negatiu: oblit).</div>
+<p><b>La prova: el Menó.</b> En aquest diàleg, Sòcrates discuteix amb Menó i li demana que porti un <b>esclau ignorant</b>, sense estudis. Sòcrates no li explica res: només li fa <b>preguntes</b> bàsiques de geometria, dibuixant punts i línies, fins que l'esclau, amb un esforç de pensament, arriba a resoldre un problema de geometria que compleix el <b>teorema de Pitàgores</b>. Si ningú no li havia ensenyat, d'on ho treu? Plató conclou que ho <b>recordava</b>.</p>
+</div>
+<div class="box ex"><div class="tag">💡 Exemple</div>
+<p>Et passa quan sents una cançó que no recordaves: només amb les primeres notes ja saps com continua. No l'estàs aprenent, l'estàs <b>recordant</b>. Per a Plató, quan veus dos pals gairebé iguals i penses en la idea d'«igualtat perfecta», passa el mateix: els pals et desperten un record.</p>
+</div>
+<div class="box test"><div class="tag">Test</div><div class="quiz" data-q="e1"></div></div>
+</section>
+
+<section class="sec" id="e2" style="--c:var(--b3)" data-title="La dialèctica">
+<h3><span class="num">3.2</span>La dialèctica</h3>
+<div class="box exp"><div class="tag">Explicació</div>
+<p>La paraula té dos sentits:</p>
+<ol>
+<li><b>En Sòcrates:</b> és el mètode del <b>diàleg</b>, preguntes i respostes per arribar a la veritat.</li>
+<li><b>En Plató:</b> és un <b>camí ascendent</b>. Superem fases a mesura que ens apropem a la veritat: quan avances i passes de l'etapa anterior, descobreixes que l'anterior era falsa (o incompleta), i la nova passa a ser la veritat. Són falsedats que han de ser superades, com pujar una escala.</li>
+</ol>
+<figure><svg viewBox="0 0 640 200" role="img" aria-label="Escala de la dialèctica: de fals a veritat">
+<path d="M60 175 H180 V135 H300 V95 H420 V55 H560" fill="none" stroke="#d97706" stroke-width="4" stroke-linejoin="round"/>
+<text x="70" y="195" font-size="13" font-weight="700" fill="#64748b">FALS</text>
+<text x="490" y="42" font-size="14" font-weight="800" fill="#b45309">VERITAT (Idea del Bé)</text>
+<text x="120" y="165" font-size="12" fill="#334155" text-anchor="middle">etapa 1</text>
+<text x="240" y="125" font-size="12" fill="#334155" text-anchor="middle">etapa 2</text>
+<text x="360" y="85" font-size="12" fill="#334155" text-anchor="middle">etapa 3</text>
+<circle cx="440" cy="40" r="7" fill="#b45309"/><line x1="440" y1="47" x2="440" y2="55" stroke="#b45309" stroke-width="3"/>
+</svg><figcaption>Cada graó supera l'anterior, que es revela fals o incomplet.</figcaption></figure>
+<p>El final del camí és el coneixement de les idees més altes (el Bé, la Bellesa, l'U, la Justícia). Però aquestes idees <b>no les pots entendre si no les assoleixes</b>: s'han de <b>viure</b> (és un coneixement vivencial, experiencial, com explicar els colors a un cec). Per això és un coneixement <b>transformador</b>: conèixer la idea del Bé et fa <b>viure com aquella idea</b>.</p>
+</div>
+<div class="box ex"><div class="tag">💡 Exemple</div>
+<p>De petit creies que el Sol gira al voltant de la Terra (etapa 1). Després aprens que és la Terra que gira (etapa 2): l'anterior era fals. Més tard aprens que «gira» és relatiu al sistema de referència (etapa 3). Cada pas supera l'anterior i t'acosta a la veritat.</p>
+</div>
+<div class="box test"><div class="tag">Test</div><div class="quiz" data-q="e2"></div></div>
+</section>
+
+<section class="sec" id="e3" style="--c:var(--b3)" data-title="Símil de la línia">
+<h3><span class="num">3.3</span>El símil de la línia <span class="pill">no entra a les PAU</span></h3>
+<div class="box exp"><div class="tag">Explicació</div>
+<p>Plató divideix una línia en dos trossos, i cada tros en dos més. Així ordena els <b>objectes</b> que coneixem i les <b>facultats</b> amb què els coneixem, de baix (inici) a dalt (final):</p>
+<figure><svg viewBox="0 0 640 300" role="img" aria-label="Símil de la línia amb eikasia, pistis, dianoia i noesi">
+<line x1="150" y1="20" x2="150" y2="285" stroke="#0f172a" stroke-width="4"/>
+<g stroke="#0f172a" stroke-width="3"><line x1="135" y1="20" x2="165" y2="20"/><line x1="135" y1="88" x2="165" y2="88"/><line x1="125" y1="150" x2="175" y2="150"/><line x1="135" y1="225" x2="165" y2="225"/><line x1="135" y1="285" x2="165" y2="285"/></g>
+<g font-size="13">
+<text x="140" y="58" text-anchor="end" fill="#334155">Idees</text>
+<text x="140" y="124" text-anchor="end" fill="#334155">Objectes matemàtics</text>
+<text x="140" y="192" text-anchor="end" fill="#334155">Coses (la cadira)</text>
+<text x="140" y="260" text-anchor="end" fill="#334155">Imatges, ombres</text>
+<text x="180" y="58" font-weight="800" fill="#b45309">NOESI <tspan font-weight="400" fill="#334155">· intel·ligència</tspan></text>
+<text x="180" y="124" font-weight="800" fill="#b45309">DIANOIA <tspan font-weight="400" fill="#334155">· pensament discursiu</tspan></text>
+<text x="180" y="192" font-weight="800" fill="#b45309">PISTIS <tspan font-weight="400" fill="#334155">· creença</tspan></text>
+<text x="180" y="260" font-weight="800" fill="#b45309">EIKASIA <tspan font-weight="400" fill="#334155">· imaginació</tspan></text>
+</g>
+<rect x="440" y="22" width="180" height="124" rx="10" fill="#eef0ff" stroke="#4f46e5"/>
+<text x="530" y="78" text-anchor="middle" font-size="13" font-weight="800" fill="#3730a3">MÓN INTEL·LIGIBLE</text><text x="530" y="98" text-anchor="middle" font-size="12.5" fill="#334155">ciència (epistéme)</text>
+<rect x="440" y="154" width="180" height="130" rx="10" fill="#f8fafc" stroke="#94a3b8"/>
+<text x="530" y="214" text-anchor="middle" font-size="13" font-weight="800" fill="#334155">MÓN SENSIBLE</text><text x="530" y="234" text-anchor="middle" font-size="12.5" fill="#334155">opinió (dóxa)</text>
+<text x="10" y="155" font-size="11.5" fill="#dc2626" font-weight="700">el pas que</text><text x="10" y="169" font-size="11.5" fill="#dc2626" font-weight="700">costa més</text>
+</svg><figcaption>De baix a dalt: d'ombres a idees. El salt més difícil és del sensible a l'intel·ligible.</figcaption></figure>
+<ul>
+<li><b>Eikasia (imaginació):</b> veiem imatges, ombres, reflexos. És el nivell més baix: coneixem la realitat de manera mínima.</li>
+<li><b>Pistis (creença):</b> veiem les coses físiques mateixes (la cadira real, no la seva imatge).</li>
+<li><b>Dianoia (pensament discursiu):</b> pensem objectes matemàtics. És «discursiu» perquè el pensament <b>transcorre en el temps</b>, per fases, pas a pas (<i>córrer</i> és físic; <i>discórrer</i> és mental). A les matemàtiques, amb els nombres, no hi ha errors.</li>
+<li><b>Noesi (intel·ligència):</b> coneixem les idees. Es produeix un coneixement <b>sobtat</b>, una <b>il·luminació</b>.</li>
+</ul>
+<p>Els passos dins de cada món són «fàcils» (d'ombra a cosa, de matemàtiques a idees). <b>El canvi que costa més</b> és el de la pistis a la dianoia: deixar el món sensible i passar a l'intel·ligible.</p>
+<div class="mn">🧠 Ordre de baix a dalt: <b>E-P-D-N</b> → «<b>E</b>n <b>P</b>lató <b>D</b>omina la <b>N</b>oesi».</div>
+</div>
+<div class="box ex" ><div class="tag">💡 Exemple</div>
+<p>Una cadira: veure-la reflectida en un mirall és <b>eikasia</b>; veure la cadira real és <b>pistis</b>; calcular geomètricament les seves mesures és <b>dianoia</b>; entendre què fa que qualsevol cadira sigui una cadira (la idea de Cadira) és <b>noesi</b>.</p>
+</div>
+<div class="box test"><div class="tag">Test</div><div class="quiz" data-q="e3"></div></div>
+</section>
+
+<section class="sec" id="e4" style="--c:var(--b3)" data-title="El mite de la caverna">
+<h3><span class="num">3.4</span>El mite de la caverna <span class="star">⭐ entra</span></h3>
+<div class="box exp"><div class="tag">Explicació</div>
+<p>Al llibre, a les primeres pàgines (p. 39). És el mite més famós de Plató i resumeix tota la seva filosofia. Uns <b>presoners</b> viuen des de petits encadenats al fons d'una cova, mirant la paret. Darrere seu hi ha un mur, i darrere el mur, un <b>foc</b>. Per davant del foc passen persones transportant objectes, que projecten <b>ombres</b> a la paret. Els presoners només han vist ombres, i creuen que això és la realitat.</p>
+<figure><svg viewBox="0 0 640 230" role="img" aria-label="Esquema de la caverna: presoners, ombres, mur, foc i sortida cap al sol">
+<path d="M20 210 V40 Q20 20 40 20 H430 L520 120 V210 Z" fill="#f1f5f9" stroke="#64748b" stroke-width="2"/>
+<rect x="22" y="60" width="10" height="120" fill="#94a3b8"/>
+<g fill="#475569"><ellipse cx="58" cy="105" rx="14" ry="9"/><ellipse cx="62" cy="140" rx="12" ry="8"/></g>
+<text x="40" y="200" font-size="12" fill="#334155" font-weight="700">ombres</text>
+<g fill="#334155"><circle cx="110" cy="150" r="8"/><rect x="104" y="158" width="12" height="22" rx="3"/><circle cx="140" cy="150" r="8"/><rect x="134" y="158" width="12" height="22" rx="3"/></g>
+<text x="125" y="200" font-size="12" fill="#334155" text-anchor="middle" font-weight="700">presoners</text>
+<rect x="200" y="140" width="80" height="40" fill="#cbd5e1"/><text x="240" y="200" font-size="12" fill="#334155" text-anchor="middle" font-weight="700">mur</text>
+<rect x="225" y="112" width="12" height="28" fill="#64748b"/><rect x="246" y="118" width="14" height="22" fill="#64748b"/>
+<path d="M330 180 Q320 150 335 135 Q340 155 350 140 Q360 160 345 180 Z" fill="#f97316"/><text x="340" y="200" font-size="12" fill="#c2410c" text-anchor="middle" font-weight="700">foc</text>
+<path d="M300 60 Q420 60 500 150" fill="none" stroke="#d97706" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="400" y="50" font-size="12" fill="#b45309" font-weight="700">camí de sortida</text>
+<circle cx="590" cy="60" r="28" fill="#fbbf24"/><g stroke="#fbbf24" stroke-width="3"><line x1="590" y1="18" x2="590" y2="8"/><line x1="548" y1="60" x2="538" y2="60"/><line x1="560" y1="30" x2="553" y2="23"/><line x1="620" y1="30" x2="627" y2="23"/></g>
+<text x="590" y="108" font-size="12.5" fill="#92400e" text-anchor="middle" font-weight="800">SOL = BÉ</text>
+<text x="575" y="200" font-size="12" fill="#334155" text-anchor="middle" font-weight="700">fora: natura, llum</text>
+</svg><figcaption>Dins la caverna, el món sensible; fora, el món intel·ligible.</figcaption></figure>
+<p><b>La divisió dels dos móns:</b></p>
+<ul>
+<li><b>Dins la caverna</b> → món sensible: la història, els humans, la vida quotidiana.</li>
+<li><b>Fora de la caverna</b> → món intel·ligible: la natura, la llum.</li>
+<li><b>El sol</b> → la <b>Idea del Bé</b>: allò més bell, del qual depèn la resta, l'origen de tot. Per això el mite serveix per <b>aclarir la idea del Bé</b>.</li>
+</ul>
+<p><b>L'individu que surt:</b> un presoner es deslliura de les cadenes i surt amb un <b>esforç titànic</b> (la llum l'enlluerna, li fa mal). A fora descobreix el que hi ha realment. Llavors <b>torna</b> a la caverna perquè vol comunicar el que ha descobert: <b>és un filòsof</b>. Però els altres se'n riuen i, si poguessin, el matarien. Plató insinua que podria ser <b>Sòcrates</b> (tot i que no ho diu).</p>
+<div class="key">🔑 El mite té lectura <b>metafísica</b> (dos móns), <b>epistemològica</b> (de les ombres al sol = de l'opinió a la ciència, com la línia), <b>antropològica</b> (l'ànima encadenada al cos) i <b>política</b> (el filòsof ha de tornar a governar, encara que no el vulguin).</div>
+</div>
+<div class="box ex"><div class="tag">💡 Exemple</div>
+<p>Algú que només s'informa per vídeos virals i creu que «ja ho sap tot» és com un presoner que mira ombres. Si un dia investiga a fons, li costa (la llum enlluerna), però veu les coses tal com són. Quan ho intenta explicar al grup, el titllen de pesat o d'estrany: és el que li passa al filòsof quan torna a la caverna.</p>
+</div>
+<div class="box test"><div class="tag">Test</div><div class="quiz" data-q="e4"></div></div>
+<div class="box test open"><div class="tag">Pregunta oberta · Bloc 3</div>
+<p><b>Per què per a Plató conèixer és recordar? Relaciona-ho amb la seva antropologia.</b></p>
+<textarea placeholder="Escriu la teva resposta..."></textarea>
+<div style="margin-top:8px"><button class="btn ghost showModel" type="button">Veure resposta model</button></div>
+<div class="model"><p>Per a Plató l'ànima és immortal i té una naturalesa intel·ligible. Abans d'unir-se al cos, va viure al món de les idees i les va contemplar. Quan el carro alat va perdre les ales i l'ànima es va unir accidentalment a un cos, les va oblidar. Per això conèixer no és aprendre res de nou, sinó <b>recordar</b> (<i>anàmnesi</i>): les coses sensibles ens desperten el record de les idees. Plató ho demostra al <b>Menó</b>: un esclau sense estudis, només responent les preguntes de Sòcrates, resol un problema de geometria (el teorema de Pitàgores). Com que ningú no li havia ensenyat, ho havia de recordar. La teoria del coneixement depèn, doncs, de l'antropologia dualista: sense una ànima que preexisteix al cos, la reminiscència no seria possible.</p>
+<div class="check"><b>Autocorrecció:</b>
+<label><input type="checkbox"> Dic que l'ànima és immortal i va contemplar les idees</label>
+<label><input type="checkbox"> Explico per què les oblida (unió amb el cos)</label>
+<label><input type="checkbox"> Faig servir «anàmnesi» / reminiscència</label>
+<label><input type="checkbox"> Explico l'exemple del Menó</label>
+<label><input type="checkbox"> Connecto epistemologia i antropologia</label>
+<div>Puntuació orientativa: <span class="selfscore">0</span> / 10</div></div></div>
+</div>
+</section>
+
+<!-- ============ BLOC 4 POLÍTICA ============ -->
+<div class="block-head" style="--c:var(--b4)" data-block="4 · Societat i política" data-c="var(--b4)">
+  <div class="n">Bloc 4</div><h2>Societat i política</h2>
+  <p>La ciutat perfecta és com una ànima ben ordenada, però en gran.</p>
+</div>
+
+<section class="sec" id="p1" style="--c:var(--b4)" data-title="Polis, República i estructura">
+<h3><span class="num">4.1</span>Politeia, República i estructura tripartida</h3>
+<div class="box exp"><div class="tag">Explicació</div>
+<ul>
+<li><b>Politeia:</b> teoria de la <b>polis</b>, és a dir, dels nuclis urbans autosuficients de la Grècia antiga.</li>
+<li><b>Res publica</b> (llatí): la «cosa pública», la que és de tots. D'aquí ve el títol <i>República</i>, l'obra on Plató exposa el seu estat ideal.</li>
+<li><b>Utopia:</b> allò que no existeix. <b>No és un terme platònic</b>: no se'l va inventar ell, tot i que avui diem que la República de Plató és una utopia.</li>
+</ul>
+<p>La idea clau és el paral·lelisme: <b>la societat perfecta ha de tenir tres parts, igual que l'ànima</b> (el carro alat). Si l'ànima és justa quan la raó mana sobre els desitjos, la ciutat serà justa quan els qui tenen més raó manin sobre la resta.</p>
+<figure><svg viewBox="0 0 640 220" role="img" aria-label="Piràmide social de Plató: governants, guardians i artesans">
+<polygon points="320,12 590,208 50,208" fill="#fdf2f8" stroke="#be185d" stroke-width="2"/>
+<line x1="230" y1="77" x2="410" y2="77" stroke="#be185d" stroke-width="1.5"/><line x1="140" y1="142" x2="500" y2="142" stroke="#be185d" stroke-width="1.5"/>
+<g text-anchor="middle" font-size="13"><text x="320" y="52" font-weight="800" fill="#9d174d">GOVERNANTS</text><text x="320" y="68" fill="#334155" font-size="11.5">auriga · saviesa</text>
+<text x="320" y="110" font-weight="800" fill="#9d174d">GUARDIANS</text><text x="320" y="128" fill="#334155" font-size="12">cavall blanc · irascible · valentia</text>
+<text x="320" y="176" font-weight="800" fill="#9d174d">ARTESANS / PRODUCTORS</text><text x="320" y="194" fill="#334155" font-size="12">cavall negre · concupiscible · temprança</text></g>
+</svg><figcaption>Com més amunt, menys persones i més raó.</figcaption></figure>
+</div>
+<div class="box ex"><div class="tag">💡 Exemple</div>
+<p>Un equip de futbol: els jugadors (molts), el cos tècnic i de seguretat (alguns) i l'entrenador (un). Si els jugadors decidissin la tàctica per votació segons el que els ve de gust, l'equip seria un caos. Plató pensa la ciutat igual.</p>
+</div>
+<div class="box test"><div class="tag">Test</div><div class="quiz" data-q="p1"></div></div>
+</section>
+
+<section class="sec" id="p2" style="--c:var(--b4)" data-title="Les tres classes socials">
+<h3><span class="num">4.2</span>Les tres classes socials</h3>
+<div class="box exp"><div class="tag">Explicació</div>
+<p><b>1. Artesans (productors, treballadors).</b> Són la part inferior, la més lligada al sensible: s'ocupen del menjar, la roba... de les <b>necessitats materials</b>. És la <b>classe més nombrosa</b>. Hi domina el <b>cavall negre</b> (concupiscible): treballen per aconseguir les seves necessitats i desitjos. Els seus desitjos són reals i estan dirigits; s'esforcen molt, és la seva vocació, i poden tenir èxit. La seva <b>virtut és la temprança</b> (moderació): quan la raó controla el cavall negre, l'artesà mostra la seva virtut.</p>
+<p><b>2. Guardians de l'estat.</b> Són l'<b>exèrcit</b> de l'estat. Destaquen pel domini del <b>cavall blanc</b>: són <b>irascibles</b>. La seva <b>virtut és la valentia</b> (el coratge). Avui serien les forces i cossos de seguretat, policies, bombers...: busquen resoldre els conflictes.</p>
+<p><b>3. Governants.</b> Dirigeixen els altres i els donen ordres. Tenen la virtut del <b>coneixement, la saviesa</b>: no cometen errors. Segons Plató, qui ha de governar el conjunt de la societat és el <b>filòsof</b>.</p>
+<div class="tw"><table class="t">
+<tr><th>Classe</th><th>Part de l'ànima</th><th>Carro alat</th><th>Virtut</th><th>Funció</th></tr>
+<tr><td><b>Governants</b></td><td>Racional</td><td>Auriga</td><td>Saviesa</td><td>Dirigir</td></tr>
+<tr><td><b>Guardians</b></td><td>Irascible</td><td>Cavall blanc</td><td>Valentia</td><td>Defensar</td></tr>
+<tr><td><b>Artesans</b></td><td>Concupiscible</td><td>Cavall negre</td><td>Temprança</td><td>Produir</td></tr>
+</table></div>
+<div class="key">🔑 Quan cada classe fa la seva funció amb la seva virtut, apareix la quarta virtut: la <b>justícia</b>, que és l'<b>harmonia</b> del conjunt.</div>
+</div>
+<div class="box ex"><div class="tag">💡 Exemple</div>
+<p>Un bomber que entra en un edifici en flames per salvar algú actua amb <b>valentia</b> (guardià). Un forner que treballa molt però no s'excedeix ni vol més del que necessita mostra <b>temprança</b> (artesà). Una persona que entén què és el millor per a tothom i pren decisions sense deixar-se portar per interessos personals mostra <b>saviesa</b> (governant).</p>
+</div>
+<div class="box test"><div class="tag">Test</div><div class="quiz" data-q="p2"></div></div>
+</section>
+
+<section class="sec" id="p3" style="--c:var(--b4)" data-title="Educació i filòsof-governant">
+<h3><span class="num">4.3</span>Educació, especialització i el filòsof que governa</h3>
+<div class="box exp"><div class="tag">Explicació</div>
+<p><b>Com se sap qui serà governant?</b> Amb un <b>procés de selecció</b> que és alhora un <b>procés educatiu</b>. Per això l'<b>educació ha de ser pública</b>: l'estat educa tothom i, segons com respon cadascú, descobreix el seu caràcter. Cada caràcter té un rol en la societat: emprendre negocis (productors), treballar per als altres i defensar (guerrers) o governar.</p>
+<ul>
+<li><b>Especialització del treball:</b> cada persona fa <b>una sola tasca</b> i la fa molt bé (el sabater fa sabates, no fa de general).</li>
+<li><b>Igualtat entre homes i dones:</b> Plató defensa que les dones poden ser guardianes i governants si en tenen la capacitat. Ell argumenta el seu sistema polític a partir de les capacitats de l'ànima, no del sexe.</li>
+<li><b>No apareix la llibertat:</b> no tries el teu lloc a la societat; te l'assigna l'educació segons la teva naturalesa.</li>
+<li><b>Antidemocràtic:</b> governar és qüestió de saber, no de vots. (No ho confonguis amb l'<b>anarquia</b>, que és l'absència de poder.)</li>
+</ul>
+</div>
+<div class="box ex"><div class="tag">💡 Exemple</div>
+<p>És com si les proves d'accés (selectivitat) no decidissin quina carrera vols fer, sinó quin lloc ocuparàs a la societat per a tota la vida, sense possibilitat de canviar. Eficient? Potser. Lliure? No. Aquesta és la crítica més habitual a Plató.</p>
+</div>
+<div class="box test"><div class="tag">Test</div><div class="quiz" data-q="p3"></div></div>
+</section>
+
+<section class="sec" id="p4" style="--c:var(--b4)" data-title="Formes de govern">
+<h3><span class="num">4.4</span>Les formes de govern i com degeneren</h3>
+<div class="box exp"><div class="tag">Explicació</div>
+<p>A la <i>República</i>, Plató ordena els governs de millor a pitjor. Cada un neix quan l'anterior es corromp, perquè <b>manca equilibri entre les parts de l'ànima</b> dels qui manen:</p>
+<ol>
+<li><b>Aristocràcia</b> (o monarquia, si governa un, el més savi): govern dels <b>millors</b>, que coneixen les idees, els filòsofs. Govern dominat per la <b>saviesa</b>. És el govern ideal.</li>
+<li><b>Timocràcia:</b> govern de la classe dels guardians, els militars. Dominat per la virtut de l'honor... però s'hi desenvolupa l'<b>ambició</b>.</li>
+<li><b>Oligarquia</b> (paraula grega): govern dels <b>rics</b>; el seu desig és acumular riqueses.</li>
+<li><b>Democràcia:</b> llibertat i igualtat entre tots → per a Plató porta a la <b>pèrdua total del sentit dels valors</b> i de l'estabilitat social.</li>
+<li><b>Tirania:</b> govern de la <b>ignorància</b>, dominat pel tirà i per les passions de la part més baixa de l'ànima.</li>
+</ol>
+<div class="key">🔑 El principi és el mateix que el món de les idees: quan es perd l'ordre (la raó a dalt), tot degenera. Per això Plató diu que <b>l'enemic més gran que podem tenir som nosaltres mateixos</b>: el desordre de la nostra pròpia ànima.</div>
+<p style="font-size:14.5px;color:var(--muted)">Lectura recomanada als apunts: dialèctica al llibre, p. 51–55.</p>
+<div class="mn">🧠 <b>A-T-O-D-T</b>: «<b>A</b>l <b>T</b>eu <b>O</b>ncle <b>D</b>esagrada la <b>T</b>irania». Saviesa → honor/ambició → diners → llibertat total → passions.</div>
+</div>
+<div class="box ex" ><div class="tag">💡 Exemple</div>
+<p>Pensa en un grup de treball de classe: comença amb qui sap més organitzant (aristocràcia). Després mana qui crida més fort (timocràcia). Després qui té l'ordinador i els recursos (oligarquia). Després «cadascú fa el que vol» (democràcia, segons Plató). I al final un sol company acaba decidint-ho tot pel seu interès (tirania).</p>
+</div>
+<div class="box test"><div class="tag">Test</div><div class="quiz" data-q="p4"></div></div>
+<div class="box test open"><div class="tag">Pregunta oberta · Bloc 4</div>
+<p><b>Per què l'estat ideal de Plató té tres classes i per què ha de governar el filòsof?</b></p>
+<textarea placeholder="Escriu la teva resposta..."></textarea>
+<div style="margin-top:8px"><button class="btn ghost showModel" type="button">Veure resposta model</button></div>
+<div class="model"><p>Plató construeix l'estat ideal a imatge de l'ànima. Com que l'ànima és tripartida (concupiscible, irascible i racional), la societat també té tres classes: els <b>artesans o productors</b>, on predomina la part concupiscible i la virtut és la temprança; els <b>guardians</b>, on predomina la part irascible i la virtut és la valentia; i els <b>governants</b>, on predomina la part racional i la virtut és la saviesa. La <b>justícia</b> és l'harmonia que s'aconsegueix quan cada classe fa la seva funció (especialització). Ha de governar el <b>filòsof</b> perquè és l'únic que ha sortit de la caverna i coneix les idees, especialment la Idea del Bé i de la Justícia; per tant, sap què és el millor per a la ciutat. Per això la teoria és antidemocràtica: el poder depèn del saber, no de la majoria. La selecció es fa a través d'una educació pública.</p>
+<div class="check"><b>Autocorrecció:</b>
+<label><input type="checkbox"> Relaciono les tres classes amb les tres parts de l'ànima</label>
+<label><input type="checkbox"> Dono la virtut de cada classe</label>
+<label><input type="checkbox"> Explico la justícia com a harmonia</label>
+<label><input type="checkbox"> Justifico el filòsof-governant amb el coneixement de les idees</label>
+<label><input type="checkbox"> Menciono l'educació o el caràcter antidemocràtic</label>
+<div>Puntuació orientativa: <span class="selfscore">0</span> / 10</div></div></div>
+</div>
+</section>
+
+<!-- ============ BLOC 5 CONNEXIONS ============ -->
+<div class="block-head" style="--c:var(--b5)" data-block="5 · Connexions" data-c="var(--b5)">
+  <div class="n">Bloc 5</div><h2>Tot connectat + altres autors</h2>
+  <p>El que més puntua a l'examen: relacionar.</p>
+</div>
+
+<section class="sec" id="c1" style="--c:var(--b5)" data-title="Taula de connexions">
+<h3><span class="num">5.1</span>La gran taula de connexions</h3>
+<div class="box exp"><div class="tag">Explicació</div>
+<p>Plató repeteix sempre la mateixa estructura: <b>una part inferior lligada al sensible i una part superior lligada a les idees</b>. Si domines aquesta taula, pots relacionar qualsevol tema amb qualsevol altre:</p>
+<div class="tw"><table class="t">
+<tr><th>Metafísica</th><th>Coneixement (línia)</th><th>Caverna</th></tr>
+<tr><td>Món intel·ligible: Idea del Bé</td><td>Noesi (ciència)</td><td>El sol</td></tr>
+<tr><td>Món intel·ligible: idees matemàtiques</td><td>Dianoia (ciència)</td><td>Reflexos i coses de fora</td></tr>
+<tr><td>Món sensible: coses</td><td>Pistis (opinió)</td><td>Objectes que passen pel mur</td></tr>
+<tr><td>Món sensible: imatges</td><td>Eikasia (opinió)</td><td>Ombres a la paret</td></tr>
+</table></div>
+<div class="tw"><table class="t">
+<tr><th>Ànima</th><th>Carro alat</th><th>Classe social</th><th>Virtut</th></tr>
+<tr><td>Racional</td><td>Auriga</td><td>Governants (filòsofs)</td><td>Saviesa</td></tr>
+<tr><td>Irascible</td><td>Cavall blanc</td><td>Guardians</td><td>Valentia</td></tr>
+<tr><td>Concupiscible</td><td>Cavall negre</td><td>Artesans / productors</td><td>Temprança</td></tr>
+<tr><td colspan="3">Harmonia de les tres parts</td><td><b>Justícia</b></td></tr>
+</table></div>
+</div>
+<div class="box ex"><div class="tag">💡 Exemple</div>
+<p>Pregunta de comentari: «Per què el filòsof torna a la caverna?» Pots connectar-ho tot: ha sortit del sensible (metafísica), ha arribat a la noesi i ha vist el sol/Bé (coneixement), en ell mana l'auriga (ànima) i per això ha de governar (política), encara que els presoners no l'entenguin.</p>
+</div>
+<div class="box test"><div class="tag">Test</div><div class="quiz" data-q="c1"></div></div>
+</section>
+
+<section class="sec" id="c2" style="--c:var(--b5)" data-title="Parmènides, Heràclit, sofistes">
+<h3><span class="num">5.2</span>Plató davant Parmènides, Heràclit i els sofistes</h3>
+<div class="box exp"><div class="tag">Explicació</div>
+<p>A la pregunta 4 del comentari et demanen interpretar un problema amb <b>Plató i Parmènides, Heràclit o els sofistes</b>. Als apunts només surten els noms; aquí tens el mínim de cada un per poder comparar:</p>
+<div class="tw"><table class="t">
+<tr><th>Autor</th><th>Què diu</th><th>Relació amb Plató</th></tr>
+<tr><td><b>Heràclit</b></td><td>Tot flueix, tot canvia: la realitat és canvi constant.</td><td>Plató li dona la raó <b>sobre el món sensible</b>: és canvi constant. Per això no en pot haver ciència.</td></tr>
+<tr><td><b>Parmènides</b></td><td>El ser és únic, etern i immòbil: no canvia. Els sentits enganyen; només la raó porta a la veritat.</td><td>Plató li dona la raó <b>sobre el món intel·ligible</b>: les idees tenen les característiques del ser de Parmènides.</td></tr>
+<tr><td><b>Sofistes</b></td><td>Relativisme: no hi ha una veritat única, cadascú té la seva. La justícia és un acord (convenció). Ensenyaven a convèncer amb discursos.</td><td>Plató s'hi <b>oposa</b>: hi ha una veritat i una justícia objectives (les idees). Ha de governar qui sap, no qui convenç millor.</td></tr>
+</table></div>
+<div class="key">🔑 Truc: <b>Plató = Heràclit (a baix) + Parmènides (a dalt) − sofistes</b>. Uneix els dos presocràtics separant dos móns, i ho fa per derrotar el relativisme sofista.</div>
+</div>
+<div class="box ex"><div class="tag">💡 Exemple de problema (pregunta 4)</div>
+<p><b>Problema:</b> en una ciutat hi ha conflicte social perquè cada grup diu que la seva idea de justícia és la bona.</p>
+<ul>
+<li><b>Un sofista</b> diria: no hi ha una justícia veritable; és just el que la majoria acorda o el que convenç millor. Cal negociar.</li>
+<li><b>Plató</b> diria: hi ha una Idea de Justícia objectiva. El conflicte ve del desordre (manen els desitjos). La solució és que governi qui la coneix i que cada classe faci la seva funció.</li>
+<li><b>Heràclit</b> diria que el conflicte i el canvi formen part de la realitat: res no és fix, tampoc les lleis de la ciutat.</li>
+</ul>
+</div>
+<div class="box test"><div class="tag">Test</div><div class="quiz" data-q="c2"></div></div>
+</section>
+
+
+<section class="sec" id="c3" style="--c:var(--b5)" data-title="Glossari">
+<h3><span class="num">5.3</span>Glossari de termes</h3>
+<div class="box exp"><div class="tag">🔑 Termes per a la pregunta 2 (definir)</div>
+<dl class="gl">
+<dt>Tópos horatós</dt><dd>Món sensible: material, captat pels sentits, temporal, canviant i imperfecte.</dd>
+<dt>Kósmos noetós</dt><dd>Món intel·ligible o de les idees: immaterial, etern, immòbil i perfecte; només es pot pensar.</dd>
+<dt>Idea</dt><dd>Essència perfecta i immutable d'una cosa; és el model que les coses sensibles imiten.</dd>
+<dt>Imitació (mímesi)</dt><dd>Relació per la qual el món sensible copia el món intel·ligible; la còpia depèn del model.</dd>
+<dt>Participació (mètexi)</dt><dd>Les coses sensibles tenen una part de la idea, que fa que siguin el que són.</dd>
+<dt>Idea del Bé</dt><dd>Idea suprema, al cim de la jerarquia; d'ella depenen les altres. A la caverna és el sol.</dd>
+<dt>Dualisme</dt><dd>Teoria que afirma dues realitats: dos móns (ontològic) o cos i ànima (antropològic).</dd>
+<dt>Psyché</dt><dd>Ànima en grec; d'aquí ve «psicologia».</dd>
+<dt>Concupiscible / irascible / racional</dt><dd>Les tres parts de l'ànima: desitjos (cavall negre), defensa i coratge (cavall blanc), pensament (auriga).</dd>
+<dt>Unió accidental</dt><dd>Unió no necessària, només possible, entre ànima i cos.</dd>
+<dt>Transmigració</dt><dd>Pas de l'ànima a un cos diferent segons el que mereix.</dd>
+<dt>Anàmnesi (reminiscència)</dt><dd>Conèixer és recordar les idees que l'ànima va contemplar abans de néixer.</dd>
+<dt>Dialèctica</dt><dd>En Sòcrates, diàleg; en Plató, ascens per etapes cap a la veritat on cada etapa supera l'anterior.</dd>
+<dt>Dóxa / epistéme</dt><dd>Opinió (sobre el món sensible) / ciència (sobre les idees).</dd>
+<dt>Eikasia, pistis, dianoia, noesi</dt><dd>Imaginació, creença, pensament discursiu i intel·ligència (símil de la línia).</dd>
+<dt>Politeia</dt><dd>Teoria de la polis, els nuclis urbans autosuficients.</dd>
+<dt>Temprança, valentia, saviesa, justícia</dt><dd>Virtuts dels artesans, dels guardians, dels governants i del conjunt (harmonia).</dd>
+</dl></div>
+<div class="box test"><div class="tag">Test</div><div class="quiz" data-q="c3"></div></div>
+</section>
+
+<!-- ============ BLOC 6 COMENTARI ============ -->
+<div class="block-head" style="--c:var(--b6)" data-block="6 · Examen" data-c="var(--b6)">
+  <div class="n">Bloc 6</div><h2>L'examen: comentari de text i simulacre</h2>
+  <p>Practica exactament el que et preguntaran.</p>
+</div>
+
+<section class="sec" id="x1" style="--c:var(--b6)" data-title="Comentari de text (PAU)">
+<h3><span class="num">6.1</span>Com és el comentari de text <span class="star">⭐ examen</span></h3>
+<div class="box exp"><div class="tag">Explicació</div>
+<div class="tw"><table class="t">
+<tr><th>Pregunta</th><th>Què et demanen</th><th>Punts</th></tr>
+<tr><td><b>1</b></td><td><b>Idea principal</b> del text: què diu el text? (un text de Plató)</td><td>2</td></tr>
+<tr><td><b>2</b></td><td><b>Definir 2 termes</b> del text, explicant-los com els entén Plató (ex.: «sensible»)</td><td>1</td></tr>
+<tr><td><b>3</b></td><td>Explicar una <b>part breu del text</b>: per què l'autor diu això? Sense afegir altra teoria de l'autor; només el necessari per explicar el fragment escollit.</td><td>3</td></tr>
+<tr><td><b>4</b></td><td>Planteja un <b>problema senzill</b> (ex.: conflictivitat social) i interpreta'n la solució amb Plató i Parmènides, Heràclit o els sofistes.</td><td>2</td></tr>
+<tr><td><b>5</b> <span class="pill">opcional</span></td><td>Resol una problemàtica: estàs a favor o no? Argumenta amb arguments propis i també amb els d'un autor. Clar, sense límit de paraules.</td><td>2</td></tr>
+</table></div>
+<div class="warn">⚠️ Error típic a la pregunta 3: explicar tota la filosofia de Plató. Només el que calgui per entendre <b>aquell</b> fragment.</div>
+</div>
+<div class="box ex"><div class="tag">💡 Text de pràctica (mite de la caverna)</div>
+<div class="text-pau">«Imagina uns homes que viuen en una cova subterrània, encadenats des de nens de manera que només poden mirar la paret del fons. Darrere seu, lluny i més amunt, crema un foc, i entre el foc i ells hi ha un camí amb un mur baix. Per aquest camí passen persones que porten tota mena d'objectes, i els presoners només en veuen les ombres projectades a la paret. Aquests homes no tindrien per real res més que les ombres. Si un d'ells fos alliberat i obligat a girar-se i mirar la llum, sentiria dolor i, enlluernat, creuria que les ombres que veia abans eren més veritables que el que ara li mostren. I si l'arrossegaguessin fins a fora, primer només podria mirar els reflexos a l'aigua i, al final, el sol mateix, i entendria que és el sol el que governa tot el que es veu.»<span class="ref">Text adaptat per a la pràctica (no és una traducció literal).</span></div>
+</div>
+<div class="box test open"><div class="tag">Pregunta 1 · Idea principal (2 p.)</div>
+<textarea placeholder="Quina és la idea principal del text?"></textarea>
+<div style="margin-top:8px"><button class="btn ghost showModel" type="button">Veure resposta model</button></div>
+<div class="model"><p>El text exposa el <b>mite de la caverna</b>: la major part dels éssers humans viuen presoners del món sensible i prenen per real el que només són ombres (opinió). L'alliberament és un procés dolorós i gradual de coneixement que porta a contemplar el sol, símbol de la <b>Idea del Bé</b>, origen i fonament de tota la realitat.</p>
+<div class="check"><b>Autocorrecció:</b>
+<label><input type="checkbox"> Identifico el mite de la caverna</label>
+<label><input type="checkbox"> Dic que les ombres = món sensible / opinió</label>
+<label><input type="checkbox"> Explico que l'ascens és gradual i costós</label>
+<label><input type="checkbox"> Dic que el sol = Idea del Bé</label>
+<div>Puntuació orientativa: <span class="selfscore">0</span> / 10</div></div></div>
+</div>
+<div class="box test open"><div class="tag">Pregunta 2 · Definir «ombres» i «sol» (1 p.)</div>
+<textarea placeholder="Defineix els dos termes segons Plató"></textarea>
+<div style="margin-top:8px"><button class="btn ghost showModel" type="button">Veure resposta model</button></div>
+<div class="model"><p><b>Ombres:</b> representen les imatges i aparences del món sensible, el nivell més baix de coneixement (eikasia). Són còpies de còpies, i qui només les coneix té opinió (dóxa), no ciència.</p><p><b>Sol:</b> representa la <b>Idea del Bé</b>, la idea suprema del món intel·ligible. Igual que el sol fa visibles les coses i les fa créixer, el Bé fa possible conèixer les idees i és l'origen de tota la realitat.</p>
+<div class="check"><b>Autocorrecció:</b>
+<label><input type="checkbox"> Ombres = món sensible / aparences / opinió</label>
+<label><input type="checkbox"> Sol = Idea del Bé, idea suprema</label>
+<label><input type="checkbox"> Explico la funció del sol (fa conèixer i existir)</label>
+<div>Puntuació orientativa: <span class="selfscore">0</span> / 10</div></div></div>
+</div>
+<div class="box test open"><div class="tag">Pregunta 3 · Per què el presoner sent dolor quan mira la llum? (3 p.)</div>
+<textarea placeholder="Explica per què Plató diu això"></textarea>
+<div style="margin-top:8px"><button class="btn ghost showModel" type="button">Veure resposta model</button></div>
+<div class="model"><p>Plató diu que el presoner alliberat sent dolor i queda enlluernat perquè el pas del món sensible al món intel·ligible <b>no és fàcil ni immediat</b>. Tota la vida s'ha acostumat a les ombres i les pren per la realitat; per això, quan se li mostra una realitat superior, la rebutja i creu que el que veia abans era més veritable. Plató vol dir que el coneixement és un <b>procés gradual</b> (dialèctica) en què cada etapa supera l'anterior, i que cal un esforç: per això el presoner ha de ser «obligat» i «arrossegat». També mostra que l'opinió és còmoda: qui només coneix aparences no sap que està equivocat.</p>
+<div class="check"><b>Autocorrecció:</b>
+<label><input type="checkbox"> Explico que el pas sensible → intel·ligible costa</label>
+<label><input type="checkbox"> Dic per què prefereix les ombres (costum, opinió)</label>
+<label><input type="checkbox"> Relaciono amb un procés gradual / dialèctica</label>
+<label><input type="checkbox"> No m'allargo amb teoria que no surt al fragment</label>
+<div>Puntuació orientativa: <span class="selfscore">0</span> / 10</div></div></div>
+</div>
+<div class="box test open"><div class="tag">Pregunta 4 · Problema: les fake news (2 p.)</div>
+<p>Moltes persones creuen notícies falses que veuen a les xarxes. Com ho interpretarien Plató i els sofistes?</p>
+<textarea placeholder="Interpreta el problema amb Plató i un altre autor"></textarea>
+<div style="margin-top:8px"><button class="btn ghost showModel" type="button">Veure resposta model</button></div>
+<div class="model"><p><b>Plató:</b> qui es creu notícies falses és com un presoner de la caverna: confon les ombres (aparences, opinió) amb la realitat. La solució és l'educació, el procés de sortir de la caverna fins a conèixer la veritat, i que les decisions públiques les prenguin els qui coneixen, no els qui opinen.</p><p><b>Sofistes:</b> com que no hi ha una veritat absoluta, cada persona té la seva versió; el que compta és qui convenç millor. Per a ells les xarxes serien un espai de retòrica, i no hi hauria una veritat objectiva per corregir-les. Plató els respondria que precisament aquest relativisme és el que permet la manipulació.</p>
+<div class="check"><b>Autocorrecció:</b>
+<label><input type="checkbox"> Explico el problema amb conceptes de Plató (caverna, opinió/ciència)</label>
+<label><input type="checkbox"> Dono la solució platònica (educació, veritat objectiva)</label>
+<label><input type="checkbox"> Explico la postura de l'altre autor correctament</label>
+<label><input type="checkbox"> Contraposo les dues postures</label>
+<div>Puntuació orientativa: <span class="selfscore">0</span> / 10</div></div></div>
+</div>
+<div class="box test open"><div class="tag">Pregunta 5 · Opcional (2 p.)</div>
+<p>Estàs d'acord amb Plató que han de governar només els que més saben? Argumenta-ho.</p>
+<textarea placeholder="Dona arguments propis i d'un autor"></textarea>
+<div style="margin-top:8px"><button class="btn ghost showModel" type="button">Veure exemple de resposta</button></div>
+<div class="model"><p><i>(No hi ha resposta única; aquest és un exemple d'estructura.)</i> Hi estic parcialment d'acord. A favor: decisions com la sanitat o el canvi climàtic requereixen coneixement expert, i Plató té raó que la majoria es pot equivocar. En contra: qui decideix qui «sap»? Sense llibertat ni vots, els governants no tenen control i poden convertir-se en tirans, que és justament el pitjor govern segons el mateix Plató. Per això crec que la millor opció és una democràcia que escolti els experts, però on el poder el controlin els ciutadans.</p>
+<div class="check"><b>Autocorrecció:</b>
+<label><input type="checkbox"> Deixo clara la meva posició</label>
+<label><input type="checkbox"> Dono almenys un argument propi</label>
+<label><input type="checkbox"> Faig servir l'argument d'un autor</label>
+<label><input type="checkbox"> Tinc en compte un contraargument</label>
+<div>Puntuació orientativa: <span class="selfscore">0</span> / 10</div></div></div>
+</div>
+</section>
+
+<section class="sec" id="x2" style="--c:var(--b6)" data-title="Simulacre final">
+<h3><span class="num">6.2</span>Simulacre final</h3>
+<div class="box exp"><div class="tag">Com funciona</div>
+<p>24 preguntes a l'atzar de tots els blocs (tipus test i V/F), amb les opcions barrejades. Respon-les totes i prem <b>Corregir</b>: obtindràs la nota sobre 10 i els apartats que has de repassar. Cada simulacre és diferent.</p>
+</div>
+<div id="examBox"></div>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+<button class="btn big" id="examCheck" type="button">Corregir</button>
+<button class="btn big ghost" id="examNew" type="button">Nou simulacre</button>
+</div>
+<div id="examResult"></div>
+</section>
+
+<footer>Fet a partir dels teus apunts de Filosofia (21/10 – 12/11/2026).</footer>
+</div></main>
+<script>
+const Q = {
+intro:[
+ {t:"Concepte",q:"Quina teoria connecta tota la filosofia de Plató?",o:["La teoria de les idees (dels dos móns)","La teoria del carro alat","La teoria de la reminiscència","La teoria de les formes de govern"],a:0,e:"La teoria de les idees és el centre: d'ella surten la metafísica, l'antropologia, l'epistemologia i la política."},
+ {t:"Raona",q:"Per què Plató necessita la teoria de les idees?",o:["Perquè si tot canviés, no hi hauria veritats fixes, ni tan sols sobre què és just","Perquè vol explicar com funcionen els sentits","Perquè vol defensar que tot és relatiu","Perquè vol demostrar que el cos és immortal"],a:0,e:"Les idees no canvien: permeten veritats objectives."},
+ {t:"Ordena",q:"Quina cadena explica millor per què ha de governar el filòsof?",o:["Hi ha idees → només la raó les coneix → en el filòsof mana la raó → sap què és just","El filòsof és ric → té temps → pot governar","El filòsof és valent → defensa la ciutat → governa","La majoria vota el filòsof → governa"],a:0,e:"Metafísica → epistemologia → antropologia → política."}
+],
+m1:[
+ {t:"Concepte",q:"Com s'anomena la postura que afirma que la realitat són dos móns?",o:["Dualisme","Monisme","Relativisme","Materialisme"],a:0,e:"Dos móns = dualisme (ontològic)."},
+ {t:"Raona",q:"Per què Plató necessita un segon món, a més del que veiem?",o:["Perquè si tot canviés, no podríem tenir coneixement segur de res","Perquè el món sensible no existeix","Perquè els déus li ho van revelar","Perquè els sentits mai s'equivoquen"],a:0,e:"El sensible canvia sempre; per tenir veritats fixes calen realitats que no canviïn: les idees."},
+ {t:"Situació",q:"El cercle que dibuixes a la pissarra pertany...",o:["Al món sensible: és una còpia imperfecta del cercle","Al món intel·ligible, perquè és geometria","Als dos móns per igual","A cap món"],a:0,e:"És material i imperfecte; el cercle perfecte només es pot pensar."}
+],
+m2:[
+ {t:"Concepte",q:"Quin nom grec rep el món sensible?",o:["Tópos horatós","Kósmos noetós","Psyché","Epistéme"],a:0,e:"Tópos horatós = lloc visible. Kósmos noetós és el món intel·ligible."},
+ {t:"Intrús",q:"Quina NO és una característica del món sensible?",o:["Etern","Temporal","Sotmès al canvi","Imperfecte"],a:0,e:"L'eternitat és pròpia del món de les idees."},
+ {t:"Raona",q:"Per què del món sensible només en podem tenir opinió?",o:["Perquè canvia contínuament i el que avui és cert demà pot no ser-ho","Perquè no existeix","Perquè els sentits són perfectes","Perquè és immaterial"],a:0,e:"Allò que canvia no permet un coneixement fix: només dóxa."}
+],
+m3:[
+ {t:"Concepte",q:"Com es diu en grec el món de les idees?",o:["Kósmos noetós","Tópos horatós","Pólis","Mètexi"],a:0,e:"Kósmos noetós = món intel·ligible."},
+ {t:"Intrús",q:"Quina característica NO és del món intel·ligible?",o:["Ocupa un lloc a l'espai","Immaterial","Immòbil","Perfecte"],a:0,e:"Les idees no estan en cap lloc ni espai: són l'«univers del pensament»."},
+ {t:"Situació",q:"Uns pares pensen el nom, el menjar i el veterinari d'un cavall que encara no ha nascut. Què demostra l'exemple?",o:["Que la idea de cavall existeix abans i independentment de qualsevol cavall concret","Que els cavalls són imperfectes","Que el cavall pertany al món intel·ligible","Que els pares tenen reminiscència"],a:0,e:"Pensen la idea (l'essència) sense haver vist el cavall concret."}
+],
+m4:[
+ {t:"Concepte",q:"Quins dos verbs fa servir Plató per a la relació entre els dos móns?",o:["Imitar i participar","Crear i destruir","Recordar i oblidar","Governar i obeir"],a:0,e:"Mímesi (imitació) i mètexi (participació)."},
+ {t:"Raona",q:"Si una cosa sensible imita una idea, què és cert?",o:["La cosa depèn de la idea, no al revés","La idea depèn de la cosa","Són iguals de perfectes","La idea desapareix si la cosa es destrueix"],a:0,e:"Qui imita depèn de la cosa imitada."},
+ {t:"Concepte",q:"Què fa que un objecte sensible sigui el que és?",o:["El que adquireix de la idea en la qual participa (la seva essència)","La seva matèria","El seu color","L'opinió de la gent"],a:0,e:"La participació en la idea li dona l'essència."}
+],
+m5:[
+ {t:"Concepte",q:"Quina idea ocupa el cim de la jerarquia segons la proposta més acceptada?",o:["La Idea del Bé","La idea de Cavall","La idea de Cadira","La idea d'Home"],a:0,e:"El Bé és la idea suprema; també es proposen l'U i la Bellesa."},
+ {t:"Raona",q:"Per què es diu que la teoria de les idees és antidemocràtica?",o:["Perquè estableix una jerarquia que afecta tots els éssers, i això es trasllada a la societat","Perquè Plató no creia en les idees","Perquè totes les idees valen igual","Perquè les idees voten"],a:0,e:"Si la realitat és jeràrquica, la ciutat també: no tothom ha de manar."},
+ {t:"Concepte",q:"Quina relació hi ha entre idees inferiors i superiors?",o:["Les inferiors depenen de les superiors","Les superiors depenen de les inferiors","No tenen cap relació","Les inferiors són imperfectes"],a:0,e:"Dependència cap amunt; totes són perfectes."}
+],
+a1:[
+ {t:"Concepte",q:"Com defineix Plató l'ésser humà?",o:["Unió de cos i ànima","Només cos","Només ànima","Un animal polític"],a:0,e:"Cos + ànima: dualisme antropològic."},
+ {t:"Raona",q:"Per què la unió de cos i ànima és un problema per a Plató?",o:["Perquè l'ànima té naturalesa intel·ligible i el cos és sensible: pertanyen a móns diferents","Perquè el cos és immortal","Perquè l'ànima no existeix","Perquè el cos és perfecte"],a:0,e:"L'ànima no és al seu lloc: el seu propòsit és el món de les idees."},
+ {t:"Concepte",q:"D'on ve la paraula «psicologia»?",o:["Del grec psyché, ànima","Del llatí res publica","Del grec pólis","Del grec mímesi"],a:0,e:"Psyché = ànima."}
+],
+a2:[
+ {t:"Concepte",q:"A quina obra de Plató apareix el mite del carro alat?",o:["Fedre","Menó","República","Apologia"],a:0,e:"Fedre. La caverna és a la República i la reminiscència al Menó."},
+ {t:"Concepte",q:"Què representa el cavall negre?",o:["La part concupiscible (desiderativa)","La part irascible","La part racional","El cos"],a:0,e:"Rebel i enèrgic: es mou pels desitjos."},
+ {t:"Situació",q:"Algú veu que insulten un amic i reacciona immediatament per defensar-lo. Quina part de l'ànima actua?",o:["Irascible (cavall blanc)","Concupiscible (cavall negre)","Racional (auriga)","Cap"],a:0,e:"La irascible s'activa davant el que és negatiu i defensa."},
+ {t:"Raona",q:"Per què l'auriga és la part més important?",o:["Perquè els cavalls no pensen i ell els ha de guiar amb el pensament","Perquè és el més fort","Perquè té ales","Perquè obeeix els cavalls"],a:0,e:"Si no guia bé, l'ànima es perd."},
+ {t:"Raona",q:"Què passa quan el carro perd les ales?",o:["Cau, és expulsat del món de les idees i l'ànima s'uneix a un cos (naixement)","L'ànima mor","El carro arriba al sol","Els cavalls es tornen blancs"],a:0,e:"La caiguda explica el naixement i la unió accidental ànima-cos."}
+],
+a3:[
+ {t:"Concepte",q:"Què vol dir que la unió ànima-cos és «accidental»?",o:["Que no és necessària, només possible","Que és dolorosa","Que és eterna","Que és obligatòria"],a:0,e:"En filosofia, accidental = no necessari."},
+ {t:"Concepte",q:"Plató diu que el cos és...",o:["La presó de l'ànima","El model de l'ànima","Immortal","La part racional"],a:0,e:"L'ànima ha d'intentar sortir de la presó."},
+ {t:"Intrús",q:"Quina afirmació NO és platònica?",o:["Quan el cos mor, l'ànima també mor","L'ànima subsisteix després de la mort","La vida és un procés de purificació","L'ànima pot transmigrar a un altre cos"],a:0,e:"Per a Plató l'ànima és immortal."},
+ {t:"Concepte",q:"Què és la transmigració?",o:["El pas de l'ànima a un altre cos segons el que mereix","La resurrecció del mateix cos","L'oblit de les idees","El pas d'una classe social a una altra"],a:0,e:"Als apunts: l'ànima transmigra a un cos diferent, segons el que et mereixes."}
+],
+e1:[
+ {t:"Concepte",q:"Què significa «anàmnesi»?",o:["Tornar a recordar","Oblidar del tot","Imaginar","Veure amb els sentits"],a:0,e:"Ana- (de nou) + mnesis (memòria). L'amnèsia és l'oblit."},
+ {t:"Raona",q:"Per què, segons Plató, conèixer és recordar?",o:["Perquè l'ànima va contemplar les idees abans de néixer i les va oblidar en unir-se al cos","Perquè els mestres ens ho ensenyen tot","Perquè els sentits ens donen les idees","Perquè l'ànima és mortal"],a:0,e:"La reminiscència depèn de la preexistència de l'ànima."},
+ {t:"Situació",q:"Al Menó, què fa Sòcrates amb l'esclau?",o:["Li fa preguntes fins que resol un problema de geometria que ningú li havia ensenyat","Li explica el teorema de Pitàgores","L'allibera de la caverna","Li ensenya a llegir"],a:0,e:"Només pregunta: l'esclau «recorda» la solució (teorema de Pitàgores)."}
+],
+e2:[
+ {t:"Concepte",q:"En Sòcrates, la dialèctica és...",o:["Un mètode de diàleg amb preguntes i respostes","Un ascens per una escala","Un tipus de govern","Una part de l'ànima"],a:0,e:"En Plató es converteix en un ascens per etapes."},
+ {t:"Raona",q:"En la dialèctica platònica, què passa amb una etapa quan la superes?",o:["Es mostra falsa o incompleta i la nova passa a ser la veritat","Es manté com a veritat definitiva","Desapareix sense deixar rastre","Es torna més verdadera"],a:0,e:"Són falsedats que han de ser superades, com una escala."},
+ {t:"Raona",q:"Per què la Idea del Bé «s'ha de viure»?",o:["Perquè no es pot entendre si no s'assoleix: és un coneixement transformador","Perquè és una idea física","Perquè s'aprèn de memòria","Perquè només la coneixen els artesans"],a:0,e:"Com explicar colors a un cec: cal experimentar-ho, i et fa viure segons aquella idea."}
+],
+e3:[
+ {t:"Ordena",q:"Quin és l'ordre del símil de la línia, de baix a dalt?",o:["Eikasia → pistis → dianoia → noesi","Noesi → dianoia → pistis → eikasia","Pistis → eikasia → noesi → dianoia","Dianoia → eikasia → noesi → pistis"],a:0,e:"D'imatges a coses, de coses a matemàtiques i de matemàtiques a idees."},
+ {t:"Situació",q:"Fas un càlcul de geometria pas a pas. Quin nivell és?",o:["Dianoia (pensament discursiu)","Noesi","Pistis","Eikasia"],a:0,e:"Objectes matemàtics; el pensament transcorre per fases."},
+ {t:"Raona",q:"Quin és el pas que costa més?",o:["De la pistis a la dianoia: del sensible a l'intel·ligible","D'eikasia a pistis","De dianoia a noesi","Cap, tots costen igual"],a:0,e:"Canviar de món és el salt més difícil."}
+],
+e4:[
+ {t:"Concepte",q:"Què simbolitza el sol al mite de la caverna?",o:["La Idea del Bé","El món sensible","El foc dels presoners","L'opinió"],a:0,e:"Allò més bell, del qual depèn la resta: origen de tot."},
+ {t:"Concepte",q:"Què representa l'interior de la caverna?",o:["El món sensible","El món intel·ligible","La Idea del Bé","El filòsof"],a:0,e:"Dins: humans, història, ombres. Fora: natura, llum."},
+ {t:"Raona",q:"Per què el presoner alliberat torna a la caverna?",o:["Perquè vol comunicar el que ha descobert: és un filòsof","Perquè té por de la llum","Perquè l'obliguen els altres presoners","Perquè prefereix les ombres"],a:0,e:"Plató insinua que podria ser Sòcrates."},
+ {t:"Concepte",q:"A quina obra es troba el mite de la caverna?",o:["República","Fedre","Menó","Timeu"],a:0,e:"República, llibre VII."}
+],
+p1:[
+ {t:"Concepte",q:"Què significa «res publica»?",o:["La cosa pública, de tots","El govern dels rics","La ciutat ideal inexistent","L'ànima de la ciutat"],a:0,e:"D'aquí el títol de l'obra República."},
+ {t:"Intrús",q:"Quin terme NO és platònic?",o:["Utopia","Politeia","Kósmos noetós","Anàmnesi"],a:0,e:"Als apunts: utopia, «terme NO platònic», no se'l va inventar ell."},
+ {t:"Raona",q:"Per què la societat perfecta té tres parts?",o:["Perquè reprodueix les tres parts de l'ànima (carro alat)","Perquè hi ha tres déus","Perquè ho decideix la majoria","Per atzar"],a:0,e:"Paral·lelisme ànima-ciutat."}
+],
+p2:[
+ {t:"Concepte",q:"Quina és la virtut dels artesans?",o:["Temprança (moderació)","Valentia","Saviesa","Justícia"],a:0,e:"Quan la raó controla el cavall negre, l'artesà mostra la temprança."},
+ {t:"Situació",q:"Un policia que intervé en un conflicte, a quina classe correspondria?",o:["Guardians","Artesans","Governants","A cap"],a:0,e:"Forces i cossos de seguretat; virtut: valentia."},
+ {t:"Concepte",q:"Quina classe és la més nombrosa?",o:["Artesans / productors","Guardians","Governants","Totes igual"],a:0,e:"Cobreixen les necessitats materials de tothom."},
+ {t:"Raona",q:"Què és la justícia en l'estat platònic?",o:["L'harmonia que apareix quan cada classe fa la seva funció","La igualtat de vots","Que tothom tingui els mateixos diners","Que governin els guardians"],a:0,e:"La quarta virtut, fruit de les altres tres."}
+],
+p3:[
+ {t:"Raona",q:"Per què l'educació ha de ser pública?",o:["Perquè és el procés de selecció que descobreix el caràcter de cadascú i el seu rol","Perquè és barata","Perquè tothom ha de ser governant","Perquè la decideixen els artesans"],a:0,e:"Selecció = procés educatiu."},
+ {t:"Intrús",q:"Quina idea NO apareix a la política de Plató?",o:["La llibertat d'escollir el propi lloc a la societat","L'especialització del treball","La igualtat d'homes i dones","El govern dels savis"],a:0,e:"Als apunts: «en la teoria de Plató no apareix la llibertat»."},
+ {t:"Concepte",q:"Què és l'anarquia?",o:["L'absència de poder","El govern dels rics","El govern dels savis","El govern d'un tirà"],a:0,e:"Contrast amb l'ordre jeràrquic platònic."}
+],
+p4:[
+ {t:"Ordena",q:"Quin és l'ordre de degeneració dels governs?",o:["Aristocràcia → timocràcia → oligarquia → democràcia → tirania","Democràcia → aristocràcia → tirania → oligarquia → timocràcia","Tirania → democràcia → oligarquia → timocràcia → aristocràcia","Oligarquia → aristocràcia → democràcia → timocràcia → tirania"],a:0,e:"De millor a pitjor."},
+ {t:"Concepte",q:"La timocràcia és el govern de...",o:["Els guardians, els militars","Els rics","Els savis","Els ignorants"],a:0,e:"Domina l'honor, però s'hi desenvolupa l'ambició."},
+ {t:"Raona",q:"Per què Plató critica la democràcia?",o:["Perquè la llibertat i la igualtat totals porten a la pèrdua dels valors i de l'estabilitat","Perquè hi governen els filòsofs","Perquè és el govern dels rics","Perquè no hi ha lleis"],a:0,e:"Per a ell, sense jerarquia de saber, es perd el sentit dels valors."},
+ {t:"Raona",q:"Quina és la causa comuna de la degeneració?",o:["La manca d'equilibri entre les parts de l'ànima","El canvi climàtic","Les guerres exteriors","La voluntat dels déus"],a:0,e:"«L'enemic més gran som nosaltres mateixos»."}
+],
+c1:[
+ {t:"Concepte",q:"Quina parella és correcta?",o:["Part irascible – guardians – valentia","Part racional – artesans – temprança","Part concupiscible – governants – saviesa","Part irascible – governants – justícia"],a:0,e:"Cavall blanc = irascible = guardians = valentia."},
+ {t:"Concepte",q:"Les ombres de la caverna es corresponen amb quin nivell de la línia?",o:["Eikasia","Pistis","Dianoia","Noesi"],a:0,e:"Imatges, el nivell més baix."},
+ {t:"Raona",q:"Què tenen en comú l'ànima, la ciutat i la realitat per a Plató?",o:["Totes tenen una estructura jeràrquica on la part superior ha de dominar","Totes són materials","Totes canvien contínuament","Totes són iguals de perfectes"],a:0,e:"És l'estructura que es repeteix a tota la seva obra."}
+],
+c2:[
+ {t:"Concepte",q:"Amb qui coincideix Plató a l'hora de descriure el món sensible?",o:["Heràclit: tot canvia","Parmènides: el ser és immòbil","Protàgores: l'home és la mesura","Ningú"],a:0,e:"El sensible és canvi constant, com deia Heràclit."},
+ {t:"Concepte",q:"Les idees platòniques tenen les característiques del ser de...",o:["Parmènides","Heràclit","Protàgores","Gorgias"],a:0,e:"Únic, etern, immòbil i conegut per la raó."},
+ {t:"Raona",q:"Per què Plató s'oposa als sofistes?",o:["Perquè defensen el relativisme i ell creu en una veritat i una justícia objectives","Perquè no cobraven","Perquè creien en les idees","Perquè defensaven el govern dels savis"],a:0,e:"Per a Plató les idees garanteixen una veritat objectiva."}
+]
+};
+
+const VF = {
+intro:[{q:"Per a Plató, la política no té res a veure amb la teoria de les idees.",a:false,fix:"Tot està connectat amb la teoria de les idees, també la política."}],
+m1:[{q:"Per a Plató la realitat és una sola, però la veiem de dues maneres.",a:false,fix:"La realitat no és una, sinó que són dues: existeixen dos móns (dualisme)."}],
+m2:[{q:"El món sensible és el kósmos noetós.",a:false,fix:"El món sensible és el tópos horatós; el kósmos noetós és el món de les idees."}],
+m3:[{q:"Les idees no tenen color ni matèria i només es poden pensar.",a:true}],
+m4:[{q:"Segons Plató, el món de les idees depèn del món sensible.",a:false,fix:"És al revés: qui imita (el sensible) depèn de la cosa imitada (les idees)."}],
+m5:[{q:"Totes les idees són perfectes, encara que unes depenguin de les altres.",a:true}],
+a1:[{q:"Si cos i ànima se separessin, l'ésser humà seguiria vivint igual.",a:false,fix:"Si se separessin, l'ésser humà no existiria: moriria."}],
+a2:[{q:"Al carro alat, el cavall blanc és la part concupiscible.",a:false,fix:"El cavall blanc és la part irascible; el negre és la concupiscible."},{q:"L'auriga obliga els cavalls a obeir, i això és un esforç.",a:true}],
+a3:[{q:"Per a Plató, quan morim, el cos es destrueix però l'ànima subsisteix.",a:true}],
+e1:[{q:"Per a Plató, conèixer és aprendre coses que l'ànima no havia vist mai.",a:false,fix:"Conèixer és recordar (anàmnesi) el que l'ànima ja havia contemplat."}],
+e2:[{q:"En la dialèctica de Plató, quan passes a una nova etapa, l'anterior es mostra falsa.",a:true}],
+e3:[{q:"El símil de la línia entra a les PAU.",a:false,fix:"Segons els apunts, el símil de la línia no entra a les PAU."},{q:"La noesi és un coneixement sobtat, una il·luminació.",a:true}],
+e4:[{q:"Plató diu explícitament que el presoner que surt és Sòcrates.",a:false,fix:"Només ho insinua: Plató no ho diu."},{q:"Fora de la caverna hi ha la natura i la llum, que representen el món intel·ligible.",a:true}],
+p1:[{q:"La República vol dir 'cosa pública', la que és de tots.",a:true}],
+p2:[{q:"La virtut dels guardians és la saviesa.",a:false,fix:"La virtut dels guardians és la valentia (coratge); la saviesa és dels governants."}],
+p3:[{q:"Plató defensa la igualtat entre homes i dones.",a:true},{q:"En la teoria de Plató, la llibertat és el valor central.",a:false,fix:"En la teoria de Plató no apareix la llibertat."}],
+p4:[{q:"L'oligarquia és el govern dels militars.",a:false,fix:"L'oligarquia és el govern dels rics; el dels militars és la timocràcia."}],
+c1:[{q:"La justícia és la virtut pròpia dels artesans.",a:false,fix:"La justícia és l'harmonia de les tres classes; la virtut dels artesans és la temprança."}],
+c2:[{q:"Plató dona la raó a Heràclit pel que fa al món sensible.",a:true}],
+c3:[{q:"Dóxa vol dir ciència i epistéme vol dir opinió.",a:false,fix:"Dóxa = opinió; epistéme = ciència."}]
+};
+Q.c3=[
+ {t:"Concepte",q:"Què és la «mètexi»?",o:["La participació de les coses sensibles en les idees","La imitació del món sensible","El record de les idees","La transmigració de l'ànima"],a:0,e:"Mímesi = imitació; mètexi = participació."},
+ {t:"Parella",q:"Quina parella és INCORRECTA?",o:["Pistis – objectes matemàtics","Eikasia – imatges","Noesi – idees","Dianoia – pensament discursiu"],a:0,e:"La pistis és creença sobre les coses físiques; els objectes matemàtics són de la dianoia."},
+ {t:"Concepte",q:"La politeia és...",o:["La teoria de la polis","El govern dels rics","Una part de l'ànima","El món de les idees"],a:0,e:"Teoria de la polis (nuclis urbans autosuficients)."}
+];
+Object.keys(VF).forEach(k=>VF[k].forEach(v=>{(Q[k]=Q[k]||[]).push({t:"V/F",vf:true,q:v.q,a:v.a?0:1,o:["Vertader","Fals"],e:v.a?"És vertader.":"És fals. ✔️ "+v.fix})}));
+
+const TITLES = {};
+document.querySelectorAll('section.sec').forEach(s=>TITLES[s.id]=s.dataset.title);
+const KEYMAP = {intro:"s-intro"};
+const secOf = k => KEYMAP[k]||k;
+
+let store={};
+try{store=JSON.parse(localStorage.getItem('plato-quiz')||'{}')}catch(e){store={}}
+function save(){try{localStorage.setItem('plato-quiz',JSON.stringify(store))}catch(e){}}
+
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+
+function renderQuiz(el,key){
+  const list=Q[key]||[];
+  el.innerHTML='';
+  list.forEach((item,i)=>{
+    const id=key+'-'+i;
+    const d=document.createElement('div');d.className='q';
+    const order=item.vf?item.o.map((t,k)=>({t,k})):shuffle(item.o.map((t,k)=>({t,k})));
+    d.innerHTML=`<div class="qt"><span class="qtype">${item.t}</span>${esc(item.q)}</div>`+
+      (item.vf?'<div class="vf">':'')+order.map(o=>`<button class="opt" type="button" data-k="${o.k}">${esc(o.t)}</button>`).join('')+(item.vf?'</div>':'')+
+      `<div class="fb"></div>`;
+    const fb=d.querySelector('.fb');
+    const answer=(k,silent)=>{
+      d.querySelectorAll('.opt').forEach(b=>{b.disabled=true;const bk=+b.dataset.k;if(bk===item.a)b.classList.add('right');else if(bk===k)b.classList.add('wrong')});
+      const ok=k===item.a;
+      fb.className='fb show '+(ok?'okk':'kok');
+      fb.innerHTML=(ok?'<b>Correcte.</b> ':'<b>No és aquesta.</b> ')+esc(item.e);
+      if(!silent){store[id]=ok?1:0;save();updateScores()}
+    };
+    d.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>answer(+b.dataset.k)));
+    if(id in store){ answer(store[id]?item.a:-1,true) }
+    el.appendChild(d);
+  });
+  const bar=document.createElement('div');bar.className='qbar';
+  bar.innerHTML=`<span class="qs"></span><button class="btn ghost" type="button">Tornar a fer</button>`;
+  bar.querySelector('button').addEventListener('click',()=>{list.forEach((_,i)=>delete store[key+'-'+i]);save();renderQuiz(el,key);updateScores()});
+  el.appendChild(bar);
+}
+function scoreOf(key){const n=(Q[key]||[]).length;let ok=0,done=0;for(let i=0;i<n;i++){const v=store[key+'-'+i];if(v!==undefined){done++;ok+=v}}return{n,ok,done}}
+function updateScores(){
+  let tot=0,okT=0;
+  Object.keys(Q).forEach(k=>{
+    const s=scoreOf(k);tot+=s.n;okT+=s.ok;
+    const sc=document.querySelector(`.nav-link[href="#${secOf(k)}"] .sc`);
+    if(sc){sc.textContent=s.done?`${s.ok}/${s.n}`:`–/${s.n}`;sc.classList.toggle('done',s.done===s.n&&s.ok===s.n)}
+    const qs=document.querySelector(`.quiz[data-q="${k}"] .qs`);
+    if(qs)qs.textContent=s.done?`Encerts: ${s.ok} de ${s.n}`:`${s.n} preguntes`;
+  });
+  document.getElementById('pTxt').textContent=`${okT} / ${tot}`;
+  document.getElementById('pBar').style.width=(tot?okT/tot*100:0)+'%';
+}
+
+/* nav */
+const nav=document.getElementById('navList');
+document.querySelectorAll('.block-head, section.sec').forEach(el=>{
+  if(el.classList.contains('block-head')){
+    const b=document.createElement('div');b.className='nav-block';b.style.setProperty('--c',el.dataset.c);b.textContent=el.dataset.block;nav.appendChild(b);
+  }else{
+    const a=document.createElement('a');a.className='nav-link';a.href='#'+el.id;a.style.setProperty('--c',getComputedStyle(el).getPropertyValue('--c'));
+    const num=el.querySelector('.num');
+    a.innerHTML=`<span>${num?num.textContent+' · ':''}${esc(el.dataset.title)}</span><span class="sc"></span>`;
+    a.addEventListener('click',()=>document.body.classList.remove('menu'));
+    nav.appendChild(a);
+  }
+});
+document.querySelectorAll('.quiz').forEach(el=>renderQuiz(el,el.dataset.q));
+updateScores();
+
+/* active section */
+const links=[...document.querySelectorAll('.nav-link')];
+const secs=[...document.querySelectorAll('section.sec')];
+function setActive(){
+  const y=window.innerHeight*0.3;let cur=secs[0];
+  for(const s of secs){if(s.getBoundingClientRect().top<=y)cur=s}
+  links.forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+cur.id));
+  const act=links.find(l=>l.classList.contains('active'));
+  if(act&&window.innerWidth>1000){const side=document.getElementById('side');const r=act.getBoundingClientRect();if(r.top<80||r.bottom>window.innerHeight-40)side.scrollTop+=r.top-window.innerHeight/2}
+}
+let tick=false;window.addEventListener('scroll',()=>{if(!tick){tick=true;requestAnimationFrame(()=>{setActive();tick=false})}},{passive:true});
+setActive();
+
+/* mobile menu */
+document.getElementById('menuBtn').addEventListener('click',()=>document.body.classList.toggle('menu'));
+document.getElementById('scrim').addEventListener('click',()=>document.body.classList.remove('menu'));
+document.getElementById('resetAll').addEventListener('click',()=>{store={};save();document.querySelectorAll('.quiz').forEach(el=>renderQuiz(el,el.dataset.q));updateScores()});
+
+/* open questions */
+document.querySelectorAll('.open').forEach(box=>{
+  const btn=box.querySelector('.showModel'),m=box.querySelector('.model');
+  btn.addEventListener('click',()=>{m.classList.toggle('show');btn.textContent=m.classList.contains('show')?'Amagar resposta':'Veure resposta model'});
+  const cbs=[...box.querySelectorAll('.check input')],out=box.querySelector('.selfscore');
+  cbs.forEach(c=>c.addEventListener('change',()=>{const n=cbs.filter(x=>x.checked).length;out.textContent=(Math.round(n/cbs.length*100)/10).toString().replace('.',',')}));
+});
+
+/* exam */
+let exam=[];
+function newExam(){
+  const pool=[];Object.keys(Q).forEach(k=>Q[k].forEach((it,i)=>pool.push({k,i,it})));
+  exam=shuffle(pool).slice(0,24);
+  const box=document.getElementById('examBox');box.innerHTML='';
+  exam.forEach((x,n)=>{
+    const d=document.createElement('div');d.className='q';
+    const order=x.it.vf?x.it.o.map((t,k)=>({t,k})):shuffle(x.it.o.map((t,k)=>({t,k})));
+    d.innerHTML=`<div class="qt"><span class="qtype">${n+1}${x.it.vf?' · V/F':''}</span>${esc(x.it.q)}</div>`+(x.it.vf?'<div class="vf">':'')+order.map(o=>`<button class="opt" type="button" data-k="${o.k}">${esc(o.t)}</button>`).join('')+(x.it.vf?'</div>':'')+`<div class="fb"></div>`;
+    d.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>{if(x.done)return;d.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));b.classList.add('sel');x.sel=+b.dataset.k}));
+    x.el=d;box.appendChild(d);
+  });
+  const r=document.getElementById('examResult');r.style.display='none';r.innerHTML='';
+}
+function checkExam(){
+  const missing=exam.filter(x=>x.sel===undefined).length;
+  const r=document.getElementById('examResult');
+  if(missing&&!r.dataset.warned){r.dataset.warned='1';r.style.display='block';r.innerHTML=`<b>Et falten ${missing} preguntes per respondre.</b> Si prems «Corregir» una altra vegada, es corregirà igualment.`;return}
+  delete r.dataset.warned;
+  let ok=0;const bad={};
+  exam.forEach(x=>{
+    x.done=true;
+    x.el.querySelectorAll('.opt').forEach(b=>{b.disabled=true;b.classList.remove('sel');const k=+b.dataset.k;if(k===x.it.a)b.classList.add('right');else if(k===x.sel)b.classList.add('wrong')});
+    const good=x.sel===x.it.a;if(good)ok++;else bad[x.k]=(bad[x.k]||0)+1;
+    const fb=x.el.querySelector('.fb');fb.className='fb show '+(good?'okk':'kok');fb.innerHTML=(good?'<b>Correcte.</b> ':'<b>Incorrecte.</b> ')+esc(x.it.e);
+  });
+  const g=ok/exam.length*10;
+  const blocks={};exam.forEach(x=>{const sec=document.getElementById(secOf(x.k));const c=getComputedStyle(sec).getPropertyValue('--c').trim();let h=sec.previousElementSibling;while(h&&!h.classList.contains('block-head'))h=h.previousElementSibling;const name=h?h.dataset.block:'';blocks[name]=blocks[name]||{ok:0,n:0,c};blocks[name].n++;if(x.sel===x.it.a)blocks[name].ok++});
+  const bars='<div class="tbars"><b>Encerts per tema</b>'+Object.entries(blocks).map(([nm,b])=>`<div class="tbar"><span>${esc(nm)}</span><span class="tr"><i style="width:${b.ok/b.n*100}%;background:${b.c}"></i></span><span>${b.ok}/${b.n}</span></div>`).join('')+'</div>';
+  const msg=g>=9?'Excel·lent: domines Plató.':g>=7?'Molt bé. Repassa els apartats marcats.':g>=5?'Aprovat, però hi ha llacunes.':'Encara cal repassar.';
+  const weak=Object.keys(bad).sort((a,b)=>bad[b]-bad[a]);
+  r.style.display='block';
+  r.innerHTML=`<div class="grade" style="color:${g>=5?'var(--ok)':'var(--ko)'}">${g.toFixed(1).replace('.',',')}<span style="font-size:20px;color:var(--muted)"> / 10</span></div><p><b>${ok}</b> encerts de ${exam.length}. ${msg}</p>`+bars+
+    (weak.length?`<p style="margin-bottom:4px"><b>Repassa:</b></p><div class="weak">${weak.map(k=>`<a href="#${secOf(k)}">${esc(TITLES[secOf(k)]||k)} (${bad[k]})</a>`).join('')}</div>`:'');
+  r.scrollIntoView({behavior:'smooth',block:'center'});
+}
+document.getElementById('examNew').addEventListener('click',()=>{newExam();document.getElementById('x2').scrollIntoView({behavior:'smooth'})});
+document.getElementById('examCheck').addEventListener('click',checkExam);
+newExam();
+
+</script>
+</body>
+</html>
